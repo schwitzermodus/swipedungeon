@@ -1,0 +1,74 @@
+name: CI - Swipe Dungeon
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. JS-Syntaxpruefung
+      # Extrahiert den <script>-Block und prueft mit Node.js auf Syntaxfehler.
+      # Faengt vergessene Klammern, falsche Syntax usw. vor dem Deploy ab.
+      - name: JS Syntax Check
+        run: |
+          node -e "
+            const fs = require('fs');
+            const html = fs.readFileSync('index.html', 'utf8');
+            const matches = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)];
+            if (!matches.length) { console.error('Kein script-Block gefunden'); process.exit(1); }
+            const js = matches.map(m => m[1]).join('\n');
+            fs.writeFileSync('/tmp/swipe_check.js', js);
+            console.log('Script extrahiert (' + js.length + ' Zeichen)');
+          "
+          node --check /tmp/swipe_check.js
+          echo "JS-Syntax OK"
+
+      # 2. Pflichtdateien-Check
+      # Stellt sicher dass alle Medien-Assets im Repo vorhanden sind.
+      # Verhindert Deploys mit kaputten Bild- oder Audio-Referenzen.
+      - name: Required Assets Check
+        run: |
+          MISSING=0
+          check_file() {
+            if [ -f "$1" ]; then
+              echo "OK: $1"
+            else
+              echo "FEHLT: $1"
+              MISSING=1
+            fi
+          }
+          check_file "index.html"
+          check_file "Titelmusik 1.mp3"
+          check_file "Boss 1.jpg"
+          check_file "Kampf Monster 1.jpg"
+          check_file "Ergebnis Story 1.jpg"
+          check_file "Schrein Magie 1.jpg"
+          check_file "Schatzkammer 1.jpg"
+          check_file "Rastplatz Lagerfeuer 1.jpg"
+          check_file "Haendler 1.jpg"
+          if [ $MISSING -ne 0 ]; then
+            echo "::error::Mindestens eine Pflichtdatei fehlt im Repository."
+            exit 1
+          fi
+          echo "Alle Assets vorhanden"
+
+      # 3. Dateigroesse-Gate
+      # Warnt fruehzeitig wenn index.html ungewoehnlich gross wird.
+      # Limit: 500 KB (aktuell ~46 KB).
+      - name: File Size Check
+        run: |
+          SIZE=$(wc -c < index.html)
+          SIZE_KB=$((SIZE / 1024))
+          echo "index.html: ${SIZE_KB} KB (${SIZE} Bytes)"
+          if [ $SIZE -gt 512000 ]; then
+            echo "::error::index.html ueberschreitet das Limit von 500 KB."
+            exit 1
+          fi
+          echo "Dateigroesse OK"
