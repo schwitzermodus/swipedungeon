@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Dungeon des Schicksals</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0a06; --bg2:#171008; --parchment:#f0e4b0; --ink:#1a0c00; --ink2:#3a2010;
+  --accent:#c07018; --gold:#d4a010; --danger:#9a1818; --safe:#185428; --dim:#7a5030;
+  --border:#8a6014;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{
+  width:100%;height:100vh;overflow:hidden;background:var(--bg);
+  font-family:'Crimson Text',Georgia,serif;color:#dcc880;
+  display:flex;align-items:center;justify-content:center;user-select:none;
+}
+.screen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.35s;padding:16px;
+}
+.screen.on{opacity:1;pointer-events:all;}
+
+/* ── TITLE ─────────────────────────────── */
+.t-eye{font-family:'Cinzel',serif;font-size:10px;letter-spacing:5px;color:var(--accent);margin-bottom:14px;}
+.t-title{
+  font-family:'Cinzel',serif;font-size:clamp(38px,9vw,60px);font-weight:900;
+  color:var(--gold);text-align:center;line-height:1.05;
+  text-shadow:0 0 50px rgba(212,160,16,0.2);
+}
+.t-sub{font-size:17px;font-style:italic;color:var(--dim);margin-top:12px;text-align:center;}
+.t-deco{color:rgba(192,112,24,0.3);font-family:'Cinzel',serif;font-size:11px;letter-spacing:8px;margin-top:20px;}
+.btn{
+  font-family:'Cinzel',serif;font-size:12px;letter-spacing:3px;background:transparent;
+  border:1px solid var(--accent);color:var(--gold);padding:12px 36px;cursor:pointer;
+  transition:all 0.2s;margin-top:28px;
+}
+.btn:hover{background:rgba(192,112,24,0.12);border-color:var(--gold);}
+.btn:active{transform:scale(0.97);}
+.btn-sm{font-size:11px;padding:9px 26px;margin-top:16px;}
+
+/* ── CLASS SELECT ───────────────────────── */
+.s-head{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--gold);margin-bottom:16px;text-align:center;}
+.cls-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:460px;}
+.cls-btn{
+  background:rgba(18,12,5,0.85);border:1px solid rgba(192,112,24,0.28);
+  border-radius:2px;padding:13px 13px;cursor:pointer;transition:all 0.18s;text-align:left;
+}
+.cls-btn:hover{border-color:var(--accent);background:rgba(35,22,8,0.9);}
+.cls-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.cls-role{font-size:11px;font-style:italic;color:var(--dim);margin-bottom:8px;}
+.cls-stats{display:flex;flex-wrap:wrap;gap:4px;}
+.cs{font-size:10px;color:#a87838;background:rgba(192,160,60,0.07);padding:2px 7px;border-radius:1px;}
+
+/* ── GAME ───────────────────────────────── */
+#s-game{justify-content:flex-start;padding:0;}
+.hud{width:100%;max-width:400px;padding:10px 14px 6px;display:flex;justify-content:space-between;align-items:flex-start;}
+.floor-lbl{font-family:'Cinzel',serif;font-size:11px;color:var(--accent);letter-spacing:1px;}
+.floor-depth{font-size:10px;color:#5a3a18;margin-top:2px;}
+.wrow{display:flex;align-items:center;gap:5px;justify-content:flex-end;}
+.wlbl{font-size:9px;color:#7a5030;}
+.wtrack{width:68px;height:5px;background:#160e05;border:0.5px solid rgba(192,160,60,0.18);border-radius:3px;overflow:hidden;position:relative;}
+.wbar-l{position:absolute;left:0;top:0;height:5px;background:#8a1414;border-radius:2px 0 0 2px;transition:width 0.4s;}
+.wbar-r{position:absolute;right:0;top:0;height:5px;background:#145020;border-radius:0 2px 2px 0;transition:width 0.4s;}
+.wstatus{font-size:9px;color:#5a3a18;font-style:italic;margin-top:2px;text-align:right;}
+
+/* ── CARD STAGE ─────────────────────────── */
+.cstage{flex:1;width:100%;max-width:400px;display:flex;align-items:center;justify-content:center;position:relative;}
+.hint{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;
+  opacity:0;transition:opacity 0.1s;pointer-events:none;text-align:center;line-height:1.6;
+}
+.hint-l{left:4px;color:#8a1414;}
+.hint-r{right:4px;color:#145020;}
+
+/* ── THE CARD ───────────────────────────── */
+.card{
+  width:268px;background:var(--parchment);border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;cursor:grab;position:relative;
+  transform-origin:center 88%;
+  box-shadow:0 6px 28px rgba(0,0,0,0.75),0 1px 3px rgba(0,0,0,0.5);
+}
+.card:active{cursor:grabbing;}
+.c-art{height:148px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.c-art::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(8,5,0,0.55));}
+.c-type-lbl{
+  position:absolute;top:8px;left:8px;z-index:2;
+  font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;
+  background:rgba(8,5,0,0.72);color:#c09040;padding:2px 7px;border-radius:1px;
+}
+.c-fl-lbl{position:absolute;top:8px;right:8px;z-index:2;font-size:9px;color:rgba(192,150,40,0.4);}
+.c-body{padding:11px 12px 9px;}
+.c-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.c-text{font-size:12px;font-style:italic;color:var(--ink2);line-height:1.55;margin-bottom:8px;min-height:44px;}
+.c-acts{display:flex;gap:5px;border-top:0.5px solid #bfa050;padding-top:7px;}
+.ca-l{
+  flex:1;background:rgba(140,20,20,0.07);border:0.5px solid rgba(140,20,20,0.32);
+  color:var(--danger);font-size:9px;padding:4px 5px;text-align:center;border-radius:1px;line-height:1.45;
+}
+.ca-r{
+  flex:1;background:rgba(20,80,40,0.07);border:0.5px solid rgba(20,80,40,0.32);
+  color:var(--safe);font-size:9px;padding:4px 5px;text-align:center;border-radius:1px;line-height:1.45;
+}
+
+/* ── MESSAGE ────────────────────────────── */
+.msg-area{width:100%;max-width:400px;padding:7px 16px;min-height:44px;display:flex;align-items:center;}
+.msg-txt{font-size:12px;font-style:italic;color:#8a6838;text-align:center;width:100%;line-height:1.5;}
+
+/* ── STATS BAR ──────────────────────────── */
+.sbar{
+  width:100%;max-width:400px;background:#0f0c07;
+  border-top:1px solid rgba(192,160,60,0.1);
+  padding:8px 13px;display:flex;gap:8px;align-items:center;
+}
+.sitem{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;}
+.sval{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold);}
+.slbl{font-size:8px;color:#5a3818;letter-spacing:1px;}
+.shp{flex:2;}
+.hpwrap{display:flex;align-items:center;gap:5px;width:100%;}
+.hpbg{flex:1;height:4px;background:#160e05;border-radius:2px;overflow:hidden;}
+.hpfill{height:4px;background:#8a1818;border-radius:2px;transition:width 0.4s;}
+.hpval{font-family:'Cinzel',serif;font-size:13px;font-weight:700;min-width:34px;color:#b01818;}
+
+/* ── RESULTS ────────────────────────────── */
+#s-death,#s-victory{gap:12px;}
+.rtitle{font-family:'Cinzel',serif;font-size:clamp(28px,7vw,50px);font-weight:900;text-align:center;}
+#s-death .rtitle{color:#6a1010;}
+#s-victory .rtitle{color:var(--gold);text-shadow:0 0 40px rgba(212,160,16,0.25);}
+.rbody{font-size:15px;font-style:italic;color:var(--dim);text-align:center;max-width:310px;line-height:1.6;}
+.rstats{display:flex;gap:28px;margin-top:6px;}
+.rsitem{text-align:center;}
+.rsval{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.rslbl{font-size:10px;color:#5a3818;}
+
+/* ── ANIMATIONS ─────────────────────────── */
+@keyframes cIn{from{opacity:0;transform:translateY(22px) scale(0.97)}to{opacity:1;transform:none}}
+.card-in{animation:cIn 0.28s ease-out;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div id="s-title" class="screen on">
+  <div class="t-eye">Ein Schicksalsspiel</div>
+  <div class="t-title">Dungeon<br>des Schicksals</div>
+  <div class="t-sub">Jede Entscheidung hat ihren Preis.</div>
+  <div class="t-deco">✦ ✦ ✦</div>
+  <button class="btn" onclick="go('classselect')">Betreten</button>
+</div>
+
+<!-- CLASS SELECT -->
+<div id="s-classselect" class="screen">
+  <div class="s-head">Wähle deine Klasse</div>
+  <div class="cls-grid">
+    <div class="cls-btn" onclick="startGame('krieger')">
+      <div class="cls-name">Eisenritter</div>
+      <div class="cls-role">Tanky &amp; unerschütterlich</div>
+      <div class="cls-stats"><span class="cs">LP 25</span><span class="cs">ATK 4</span><span class="cs">DEF 4</span><span class="cs">GLK 1</span></div>
+    </div>
+    <div class="cls-btn" onclick="startGame('ranger')">
+      <div class="cls-name">Waldläufer</div>
+      <div class="cls-role">Ausgewogen &amp; flexibel</div>
+      <div class="cls-stats"><span class="cs">LP 18</span><span class="cs">ATK 5</span><span class="cs">DEF 2</span><span class="cs">GLK 4</span></div>
+    </div>
+    <div class="cls-btn" onclick="startGame('schurke')">
+      <div class="cls-name">Schattenkind</div>
+      <div class="cls-role">Riskant &amp; glückabhängig</div>
+      <div class="cls-stats"><span class="cs">LP 15</span><span class="cs">ATK 7</span><span class="cs">DEF 1</span><span class="cs">GLK 5</span></div>
+    </div>
+    <div class="cls-btn" onclick="startGame('magier')">
+      <div class="cls-name">Runensage</div>
+      <div class="cls-role">Mächtig &amp; fragil</div>
+      <div class="cls-stats"><span class="cs">LP 12</span><span class="cs">ATK 6</span><span class="cs">DEF 2</span><span class="cs">GLK 3</span></div>
+    </div>
+  </div>
+  <button class="btn btn-sm" onclick="go('title')">← Zurück</button>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="screen">
+  <div class="hud">
+    <div>
+      <div class="floor-lbl" id="h-floor">Etage 1 / 12</div>
+      <div class="floor-depth" id="h-depth">Obere Katakomben</div>
+    </div>
+    <div>
+      <div class="wrow">
+        <span class="wlbl">Kühn</span>
+        <div class="wtrack"><div class="wbar-l" id="w-l"></div><div class="wbar-r" id="w-r"></div></div>
+        <span class="wlbl">Besonnen</span>
+      </div>
+      <div class="wstatus" id="w-status">Ausgeglichen</div>
+    </div>
+  </div>
+  <div class="cstage" id="cstage">
+    <div class="hint hint-l" id="hint-l">←<br>FLIEHEN</div>
+    <div class="hint hint-r" id="hint-r">KÄMPFEN<br>→</div>
+    <div class="card" id="the-card">
+      <div class="c-art" id="c-art"></div>
+      <div class="c-body">
+        <div class="c-title" id="c-title"></div>
+        <div class="c-text" id="c-text"></div>
+        <div class="c-acts">
+          <div class="ca-l" id="c-al"></div>
+          <div class="ca-r" id="c-ar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-area"><div class="msg-txt" id="msg">Ziehe die Karte — oder benutze die Pfeiltasten.</div></div>
+  <div class="sbar">
+    <div class="sitem shp">
+      <div class="slbl">LEBENSKRAFT</div>
+      <div class="hpwrap">
+        <div class="hpbg"><div class="hpfill" id="hp-fill"></div></div>
+        <div class="hpval" id="hp-val">—</div>
+      </div>
+    </div>
+    <div class="sitem"><div class="sval" id="s-atk">—</div><div class="slbl">ATK</div></div>
+    <div class="sitem"><div class="sval" id="s-def">—</div><div class="slbl">DEF</div></div>
+    <div class="sitem"><div class="sval" id="s-gold" style="color:var(--gold)">—</div><div class="slbl">GOLD</div></div>
+  </div>
+</div>
+
+<!-- DEATH -->
+<div id="s-death" class="screen">
+  <div class="rtitle">Du bist gefallen.</div>
+  <div class="rbody">Das Dungeon hat dich verschluckt. Deine Knochen ruhen nun neben vielen anderen Abenteurern.</div>
+  <div class="rstats">
+    <div class="rsitem"><div class="rsval" id="d-floor">—</div><div class="rslbl">Etage</div></div>
+    <div class="rsitem"><div class="rsval" id="d-gold">—</div><div class="rslbl">Gold</div></div>
+  </div>
+  <button class="btn btn-sm" onclick="go('classselect')">Erneut wagen</button>
+</div>
+
+<!-- VICTORY -->
+<div id="s-victory" class="screen">
+  <div class="rtitle">Dungeon besiegt!</div>
+  <div class="rbody">Du hast die Tiefen durchquert und das Licht wieder erblickt. Legenden werden von dir gesungen.</div>
+  <div class="rstats">
+    <div class="rsitem"><div class="rsval" id="v-gold">—</div><div class="rslbl">Gold</div></div>
+    <div class="rsitem"><div class="rsval" id="v-atk">—</div><div class="rslbl">Final ATK</div></div>
+  </div>
+  <button class="btn btn-sm" onclick="go('classselect')">Neues Abenteuer</button>
+</div>
+
+<script>
+const CLS = {
+  krieger: { name:'Eisenritter', hp:25, atk:4, def:4, luck:1 },
+  ranger:  { name:'Waldläufer',  hp:18, atk:5, def:2, luck:4 },
+  schurke: { name:'Schattenkind',hp:15, atk:7, def:1, luck:5 },
+  magier:  { name:'Runensage',   hp:12, atk:6, def:2, luck:3 }
+};
+
+const MON = [
+  { n:'Großratte',       d:'Eine riesige Ratte mit blutunterlaufenen Augen starrt dich an.',                    hp:4,  atk:2, g:5,  max:6  },
+  { n:'Skelettkrieger',  d:'Knochen klappern in der Stille. Ein Skelett richtet sein verrottetes Schwert auf dich.',hp:6, atk:3, g:8,  max:12 },
+  { n:'Kobold-Räuber',   d:'Ein hinterlistiger Kobold springt hinter einem Fels hervor und zückt seinen Dolch.', hp:5, atk:3, g:10, max:7  },
+  { n:'Höhlentroll',     d:'Ein Troll taucht aus der Dunkelheit auf. Sein Atem riecht nach altem Blut.',         hp:8, atk:4, g:12, min:2, max:10 },
+  { n:'Dunkelelf-Räuber',d:'Ein Dunkelelf tritt aus dem Schatten. Er will dein Gold — oder dein Leben.',         hp:9, atk:5, g:15, min:3, max:10 },
+  { n:'Steingolem',      d:'Der Boden bebt. Ein Golem aus Stein und uralter Magie versperrt den Weg.',           hp:14,atk:5, g:18, min:5  },
+  { n:'Vampir',          d:'Kalte Augen glühen im Dunkeln. Der Vampir lächelt und zeigt seine Fangzähne.',       hp:12,atk:6, g:22, min:6  },
+  { n:'Dämonenhund',     d:'Höllisches Bellen hallt durch den Korridor. Zwei glühende Augen nähern sich.',       hp:10,atk:7, g:16, min:7  },
+  { n:'Geisterritter',   d:'Eine geisterhafte Gestalt in zerbrochener Rüstung schwebt auf dich zu.',             hp:11,atk:6, g:20, min:5  }
+];
+
+const BOSS = [
+  { n:'Kerkermeister Mordath',      d:'Der Kerkermeister erscheint persönlich. Seine Rüstung ist bedeckt mit Schilden der Gefallenen.', hp:20, atk:7,  g:45  },
+  { n:'Hexe Malvara',               d:'Eine Frau, deren Augen schwarz wie Teer sind. Sie spricht in einer Sprache, die Knochen bricht.',hp:26, atk:8,  g:60  },
+  { n:'Urzanthas, der Schlafende',  d:'Ein uralter Drache öffnet ein einziges goldenes Auge. Schon sein Atem versengt deine Haut.',    hp:35, atk:10, g:120 }
+];
+
+const EVT = [
+  { n:'Verwundeter Soldat', d:'"Bitte... hilf mir. Ich kenne einen Geheimgang..."',
+    lt:'← Weitergehen', rt:'Helfen →',
+    L:{ fate:-1, msg:'Du gehst vorbei. Sein letzter Atemzug hallt nach.' },
+    R:{ hp:-3, gold:10, fate:1, msg:'Du hilfst. Er gibt dir dankbar seinen Beutel. +10 Gold, −3 LP.' }
+  },
+  { n:'Flüsternde Stimme', d:'"Folge mir... ich zeige dir Schätze, die kein Sterblicher je sah."',
+    lt:'← Ignorieren', rt:'Folgen →',
+    L:{ fate:1, msg:'Du ignorierst die Stimme. Besonnene Entscheidung.' },
+    R:{ lr:1, fate:-1, good:{ gold:15, msg:'+15 Gold. Die Stimme führte dich zu einem verborgenen Vorrat.' }, bad:{ hp:-5, msg:'−5 LP. Eine Falle. Die Stimme lacht böse.' } }
+  },
+  { n:'Alter Bettler', d:'"Bitte, Herr... nur eine Münze für einen Hungernden."',
+    lt:'← Ablehnen', rt:'Geben (−15 Gold) →',
+    L:{ fate:-1, msg:'Du gehst vorbei. Der Blick des Alten ist schwer.' },
+    R:{ gold:-15, luck:1, fate:1, msg:'Du gibst Gold. Er drückt dir einen Glücksstein in die Hand. +1 Glück.' }
+  },
+  { n:'Geheimnisvolle Inschrift', d:'Alte Runen an der Wand pulsieren schwach. Dein Körper kribbelt seltsam.',
+    lt:'← Weitergehen', rt:'Berühren →',
+    L:{ fate:1, msg:'Du gehst vorbei. Manche Rätsel sind besser ungelöst.' },
+    R:{ lr:1, fate:-1, good:{ atk:1, msg:'+1 Angriff. Uralte Kampfkunst überträgt sich auf deine Muskeln.' }, bad:{ hp:-3, msg:'−3 LP. Ein Schmerzstoß durchfährt deinen Körper.' } }
+  },
+  { n:'Gefangener Elf', d:'"Psst! Befreie mich — mein Volk belohnt das großzügig."',
+    lt:'← Weitergehen', rt:'Befreien →',
+    L:{ fate:-1, msg:'Du lässt ihn zurück. Sein enttäuschter Blick brennt.' },
+    R:{ hp:-2, gold:18, fate:1, msg:'+18 Gold, −2 LP. Der Elf hinterlässt dankbar seinen Vorrat.' }
+  },
+  { n:'Vergiftetes Wasser', d:'Klares Wasser im Brunnen — aber ein toter Vogel treibt obenauf.',
+    lt:'← Nicht trinken', rt:'Trotzdem trinken →',
+    L:{ fate:1, msg:'Du widerstehst der Versuchung. Weise Zurückhaltung.' },
+    R:{ lr:1, fate:-1, good:{ hp:5, msg:'+5 LP. Das Wasser war rein. Der Vogel starb natürlich.' }, bad:{ hp:-6, msg:'−6 LP. Gift! Du übergibst dich minutenlang.' } }
+  }
+];
+
+const SHR = [
+  { n:'Kriegsschrein', d:'Ein Altar aus alten Knochen und Waffen. Er verlangt ein Opfer.',
+    lt:'← Ablehnen', rt:'Opfern (−3 LP → +1 ATK)',
+    L:{ fate:1, msg:'Du verweigerst das Opfer. Der Schrein bleibt stumm.' },
+    R:{ hp:-3, atk:1, fate:-1, msg:'Schmerz — dann Stärke. +1 Angriff.' }
+  },
+  { n:'Schutzschrein', d:'Blaues Licht fließt über einen steinernen Altar. Er strahlt Wärme aus.',
+    lt:'← Ablehnen', rt:'Opfern (−3 LP → +1 DEF)',
+    L:{ fate:-1, msg:'Du lehnst den Schutz ab.' },
+    R:{ hp:-3, def:1, fate:1, msg:'Ein Kribbeln umhüllt dich. +1 Verteidigung.' }
+  },
+  { n:'Goldschrein', d:'"Gib, um zu empfangen." Münzen und Juwelen bedecken den Altar.',
+    lt:'← Ablehnen', rt:'Opfern (−15 Gold → +5 LP)', gcost:15,
+    L:{ msg:'Du lässt dein Gold. Der Schrein erlischt.' },
+    R:{ gold:-15, hp:5, msg:'Das Gold verschwindet. Dafür heilt dich eine warme Energie. +5 LP.' }
+  },
+  { n:'Glücksschrein', d:'Schimmernde Symbole tanzen um einen spiegelnden Altar. Das Schicksal ist präsent.',
+    lt:'← Ablehnen', rt:'Opfern (−5 LP → +1 GLK)',
+    L:{ fate:1, msg:'Du trittst zurück. Das Schicksal nimmt sich, was es will.' },
+    R:{ hp:-5, luck:1, fate:-1, msg:'+1 Glück. Ein Gefühl von Möglichkeiten durchströmt dich.' }
+  }
+];
+
+const TRE = [
+  { n:'Alte Truhe', d:'Eine verrostete Eisentruhe mit einfachem Schloss. Inhalt unbekannt.',
+    lt:'← Ignorieren', rt:'Öffnen →',
+    L:{ msg:'Du lässt die Truhe stehen.' },
+    R:{ lr:1, good:{ gold:20, hp:5, msg:'+20 Gold und ein Heiltrank. Heute hast du Glück!' }, bad:{ hp:-4, msg:'Eine Nadelfalle! −4 LP. Die Truhe war leer.' } }
+  },
+  { n:'Kristallkammer', d:'Leuchtende Kristalle füllen die Kammer. Einer pulsiert heller als die anderen.',
+    lt:'← Weitergehen', rt:'Kristall nehmen →',
+    L:{ msg:'Du lässt die Kristalle in Ruhe.' },
+    R:{ hp:8, msg:'Der Kristall zerplatzt und heilt deine Wunden. +8 LP.' }
+  },
+  { n:'Waffenkammer', d:'Zwischen Rost und Staub glänzt ein gut erhaltenes Werkzeug.',
+    lt:'← Ignorieren', rt:'Nehmen →',
+    L:{ msg:'Du lässt die alten Waffen liegen.' },
+    R:{ lr:1, good:{ atk:1, msg:'+1 Angriff. Eine scharf geschliffene Klinge.' }, bad:{ def:1, msg:'+1 Verteidigung. Ein stabiler Schild, noch brauchbar.' } }
+  },
+  { n:'Verfluchte Schatzkammer', d:'Unmengen Gold — mehr als du je sahst. Aber die Luft riecht nach uralter Magie.',
+    lt:'← Fliehen!', rt:'Nehmen (Fluch: −3 LP) →',
+    L:{ fate:1, msg:'Du vertraust deinem Instinkt und fliehst. Weise Entscheidung.' },
+    R:{ gold:25, hp:-3, fate:-1, msg:'+25 Gold. Der Fluch greift nach dir — aber das Gold ist real.' }
+  }
+];
+
+const RST = [
+  { n:'Altes Lagerfeuer', d:'Das Feuer knistert. Wärme breitet sich aus. Schlafen oder üben?',
+    lt:'← Schlafen (+6 LP)', rt:'Trainieren (+1 ATK)',
+    L:{ hp:6, fate:1, msg:'Du schläfst tief. Deine Wunden schließen sich. +6 LP.' },
+    R:{ atk:1, fate:-1, msg:'Du übst Stunden lang. Dein Schwertarm stärkt sich. +1 ATK.' }
+  },
+  { n:'Mystisches Lager', d:'Seltsame Zeichen. Das Licht flackert ohne Wind. Tiefe Stille.',
+    lt:'← Rasten (+8 LP)', rt:'Meditieren (+1 GLK)',
+    L:{ hp:8, msg:'Tiefe Ruhe. Du wachst gestärkt auf. +8 LP.' },
+    R:{ luck:1, fate:1, msg:'+1 Glück. In der Stille findest du innere Klarheit.' }
+  }
+];
+
+const ART = {
+  monster: `<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="50" r="32" fill="#281608"/><ellipse cx="36" cy="42" rx="8" ry="9" fill="#0e0600"/><ellipse cx="60" cy="42" rx="8" ry="9" fill="#0e0600"/><circle cx="36" cy="42" r="3.5" fill="#aa1414"/><circle cx="60" cy="42" r="3.5" fill="#aa1414"/><circle cx="37" cy="41" r="1.2" fill="#ff8080" opacity="0.6"/><circle cx="61" cy="41" r="1.2" fill="#ff8080" opacity="0.6"/><path d="M34 62 Q48 70 62 62" stroke="#1a0800" stroke-width="2" fill="none"/><rect x="26" y="20" width="5" height="13" rx="2.5" fill="#281608"/><rect x="65" y="20" width="5" height="13" rx="2.5" fill="#281608"/></svg>`,
+  boss:    `<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="52" r="34" fill="#1c0606"/><polygon points="48,8 60,30 48,25 36,30" fill="#6e0e0e"/><ellipse cx="34" cy="44" rx="9" ry="10" fill="#060000"/><ellipse cx="62" cy="44" rx="9" ry="10" fill="#060000"/><circle cx="34" cy="44" r="4.5" fill="#aa1414"/><circle cx="62" cy="44" r="4.5" fill="#aa1414"/><circle cx="35" cy="43" r="1.5" fill="#ff6060" opacity="0.5"/><circle cx="63" cy="43" r="1.5" fill="#ff6060" opacity="0.5"/><path d="M32 64 Q48 76 64 64" stroke="#6e0e0e" stroke-width="2.5" fill="none"/><path d="M32 64 L36 74 L40 64" fill="#6e0e0e"/><path d="M64 64 L60 74 L56 64" fill="#6e0e0e"/></svg>`,
+  event:   `<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="34" r="16" fill="#182030"/><rect x="36" y="50" width="24" height="30" rx="4" fill="#182030"/><circle cx="48" cy="34" r="7" fill="#28406a"/><line x1="48" y1="50" x2="48" y2="80" stroke="#202e4a" stroke-width="2.5"/><line x1="36" y1="65" x2="60" y2="65" stroke="#202e4a" stroke-width="2.5"/></svg>`,
+  shrine:  `<svg width="96" height="96" viewBox="0 0 96 96"><polygon points="48,14 63,46 33,46" fill="#28104a" stroke="#7030a0" stroke-width="1.5"/><circle cx="48" cy="42" r="7" fill="#56189a"/><circle cx="48" cy="42" r="3" fill="#b070e0"/><rect x="41" y="46" width="14" height="36" fill="#180830"/><rect x="33" y="80" width="30" height="6" rx="2" fill="#180830"/><line x1="34" y1="56" x2="22" y2="48" stroke="#7030a0" stroke-width="1" opacity="0.5"/><line x1="62" y1="56" x2="74" y2="48" stroke="#7030a0" stroke-width="1" opacity="0.5"/></svg>`,
+  treasure:`<svg width="96" height="96" viewBox="0 0 96 96"><rect x="20" y="48" width="56" height="38" rx="4" fill="#28180a"/><rect x="20" y="40" width="56" height="16" rx="4" fill="#382210"/><rect x="18" y="38" width="60" height="12" rx="3" fill="#543a16"/><rect x="40" y="48" width="16" height="13" rx="2" fill="#7a4c1e"/><circle cx="48" cy="56" r="4" fill="#c09010"/><circle cx="48" cy="56" r="2" fill="#e8c030"/></svg>`,
+  rest:    `<svg width="96" height="96" viewBox="0 0 96 96"><polygon points="48,24 40,64 56,64" fill="#a85c18" opacity="0.95"/><polygon points="48,32 38,74 58,74" fill="#cc7c2a" opacity="0.75"/><polygon points="48,36 42,66 54,66" fill="#f0c060" opacity="0.45"/><ellipse cx="48" cy="75" rx="13" ry="4" fill="#7a3810" opacity="0.7"/><rect x="41" y="71" width="14" height="5" rx="2" fill="#522408"/><ellipse cx="36" cy="80" rx="8" ry="3" fill="#2e1408" opacity="0.6"/><ellipse cx="60" cy="80" rx="8" ry="3" fill="#2e1408" opacity="0.6"/></svg>`,
+  merchant:`<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="36" r="18" fill="#1c2614"/><path d="M30,36 Q48,18 66,36" fill="#2c3820" stroke="#445038" stroke-width="1.5"/><circle cx="48" cy="40" r="9" fill="#383826"/><rect x="34" y="54" width="28" height="28" rx="3" fill="#1c2614"/><rect x="42" y="60" width="12" height="10" rx="2" fill="#b07c0a" opacity="0.85"/><circle cx="48" cy="65" r="3" fill="#eec020"/></svg>`
+};
+
+const TLBL = { monster:'Kampf', boss:'BOSS', event:'Ereignis', shrine:'Schrein', treasure:'Schatzkammer', rest:'Rastplatz', merchant:'Händler' };
+const TBGS = { monster:'#1e1208', boss:'#160808', event:'#0c141e', shrine:'#100818', treasure:'#191406', rest:'#0c1608', merchant:'#0c1208' };
+
+let S = {};
+
+function initS(cls) {
+  const c = CLS[cls];
+  S = { cls, name:c.name, hp:c.hp, mhp:c.hp, atk:c.atk, def:c.def, luck:c.luck, gold:0, floor:1, waage:0, locked:false, card:null };
+}
+
+function genCard() {
+  const f = S.floor;
+  if (f === 4)  return bossCard(0);
+  if (f === 8)  return bossCard(1);
+  if (f === 12) return bossCard(2);
+  if (f === 3 || f === 7 || f === 11) return { type:'rest', ...RST[Math.floor(Math.random() * RST.length)] };
+  const r = Math.random();
+  if (r < 0.37) return monCard();
+  if (r < 0.57) return treCard();
+  if (r < 0.72) return evtCard();
+  if (r < 0.85) return shrCard();
+  return merCard();
+}
+
+function monCard() {
+  const pool = MON.filter(m => (!m.min || S.floor >= m.min) && (!m.max || S.floor <= m.max));
+  const m = pool[Math.floor(Math.random() * pool.length)];
+  const sc = 1 + Math.max(0, S.floor - 4) * 0.12;
+  return { type:'monster', n:m.n, d:m.d, mhp:Math.round(m.hp*sc), matk:Math.round(m.atk*(1+Math.max(0,S.floor-4)*0.08)), g:Math.round(m.g*sc) };
+}
+function bossCard(i) {
+  const b = BOSS[i];
+  return { type:'boss', n:b.n, d:b.d, mhp:b.hp, matk:b.atk, g:b.g };
+}
+function evtCard()  { return { type:'event',    ...EVT[Math.floor(Math.random() * EVT.length)] }; }
+function shrCard()  { return { type:'shrine',   ...SHR[Math.floor(Math.random() * SHR.length)] }; }
+function treCard()  { return { type:'treasure', ...TRE[Math.floor(Math.random() * TRE.length)] }; }
+function merCard()  {
+  return { type:'merchant', n:'Wanderhändler', d:'Ein maskierter Händler tritt hervor. "Frischer Vorrat — für den richtigen Preis."', lt:'← Weitergehen', rt:'Heiltrank kaufen\n(15 Gold → +8 LP)', price:15 };
+}
+
+function render() {
+  const c = S.card; if (!c) return;
+  const t = c.type;
+  document.getElementById('c-art').style.background = TBGS[t] || '#1e1408';
+  document.getElementById('c-art').innerHTML =
+    `<div class="c-type-lbl">${TLBL[t]||t}</div><div class="c-fl-lbl">${S.floor}/12</div>${ART[t]||''}`;
+  document.getElementById('c-title').textContent = c.n || '';
+  document.getElementById('c-text').textContent  = c.d || '';
+  document.getElementById('c-al').innerHTML = (c.lt||'← Links').replace('\n','<br>');
+  document.getElementById('c-ar').innerHTML = (c.rt||'Rechts →').replace('\n','<br>');
+  const al = document.getElementById('c-al');
+  al.style.opacity = t === 'boss' ? '0.28' : '1';
+  al.style.cursor  = t === 'boss' ? 'not-allowed' : 'pointer';
+  document.getElementById('hint-l').innerHTML = (t==='monster'||t==='boss') ? '←<br>FLIEHEN'  : '←<br>LINKS';
+  document.getElementById('hint-r').innerHTML = (t==='monster'||t==='boss') ? 'KÄMPFEN<br>→' : 'RECHTS<br>→';
+  const card = document.getElementById('the-card');
+  card.classList.remove('card-in'); void card.offsetWidth; card.classList.add('card-in');
+}
+
+function renderHUD() {
+  document.getElementById('h-floor').textContent = 'Etage ' + S.floor + ' / 12';
+  document.getElementById('h-depth').textContent = S.floor <= 4 ? 'Obere Katakomben' : S.floor <= 8 ? 'Mittlere Gewölbe' : 'Tiefe Kammern';
+  const pct = Math.max(0, Math.min(100, (S.hp / S.mhp) * 100));
+  document.getElementById('hp-fill').style.width = pct + '%';
+  document.getElementById('hp-fill').style.background = pct < 25 ? '#6a1010' : pct < 50 ? '#78300e' : '#8a1818';
+  document.getElementById('hp-val').textContent = Math.max(0, S.hp) + '/' + S.mhp;
+  document.getElementById('s-atk').textContent  = S.atk;
+  document.getElementById('s-def').textContent  = S.def;
+  document.getElementById('s-gold').textContent = S.gold;
+  const w = S.waage;
+  document.getElementById('w-l').style.width = (w < 0 ? Math.min(50, Math.abs(w) / 8 * 50) : 0) + '%';
+  document.getElementById('w-r').style.width = (w > 0 ? Math.min(50, w / 8 * 50) : 0) + '%';
+  let ws = 'Ausgeglichen';
+  if (w <= -5) ws = 'Rasender Mut';
+  else if (w <= -2) ws = 'Kühn';
+  else if (w >= 5) ws = 'Tiefe Besonnenheit';
+  else if (w >= 2) ws = 'Besonnen';
+  document.getElementById('w-status').textContent = ws;
+}
+
+function setMsg(t) { document.getElementById('msg').textContent = t; }
+
+function applyE(e) {
+  if (!e) return;
+  if (e.hp)   S.hp   = Math.min(S.mhp, S.hp + e.hp);
+  if (e.atk)  S.atk += e.atk;
+  if (e.def)  S.def += e.def;
+  if (e.luck) S.luck = Math.max(1, S.luck + e.luck);
+  if (e.gold) S.gold = Math.max(0, S.gold + e.gold);
+  if (e.fate) S.waage = Math.max(-8, Math.min(8, S.waage + e.fate));
+}
+
+function luckRoll(e) {
+  const ok = Math.random() < (0.3 + S.luck * 0.08);
+  if (e.fate) S.waage = Math.max(-8, Math.min(8, S.waage + e.fate));
+  if (ok) { applyE(e.good); return e.good.msg; }
+  applyE(e.bad); return e.bad.msg;
+}
+
+function resolveL(c) {
+  const t = c.type;
+  if (t === 'monster') {
+    const lost = Math.min(S.gold, 8); S.gold -= lost;
+    S.waage = Math.max(-8, S.waage - 1);
+    return lost > 0 ? 'Du fliehst und verlierst ' + lost + ' Gold.' : 'Du fliehst, ohne zu kämpfen.';
+  }
+  if (t === 'boss') return '';
+  if (t === 'merchant') { S.waage = Math.min(8, S.waage + 1); return 'Du gehst weiter. Der Händler ruft dir nach.'; }
+  const e = c.L; if (!e) return '...';
+  applyE(e); return e.msg || '...';
+}
+
+function resolveR(c) {
+  const t = c.type;
+  if (t === 'monster' || t === 'boss') {
+    const crit    = Math.random() < S.luck * 0.06;
+    const dmgOut  = (crit ? 2 : 1) * S.atk;
+    S.waage = Math.max(-8, S.waage - (t === 'boss' ? 2 : 1));
+    if (dmgOut >= c.mhp) {
+      S.gold += c.g;
+      return (crit ? 'Kritischer Treffer! ' : '') + 'Du besiegst ' + c.n + '! +' + c.g + ' Gold.';
+    }
+    const dmgIn = Math.max(1, c.matk - S.def);
+    S.hp -= dmgIn;
+    if (dmgOut >= c.mhp * 0.5) {
+      S.gold += c.g;
+      return 'Harter Kampf! Du besiegst ' + c.n + ', nimmst aber ' + dmgIn + ' Schaden. +' + c.g + ' Gold.';
+    }
+    const partG = Math.floor(c.g * 0.3);
+    S.gold += partG;
+    return c.n + ' ist mächtig! Du nimmst ' + dmgIn + ' Schaden' + (partG > 0 ? ', erbeutest ' + partG + ' Gold' : '') + '.';
+  }
+  if (t === 'event' || t === 'treasure') {
+    const e = c.R; if (!e) return '...';
+    if (e.lr) return luckRoll(e);
+    applyE(e); return e.msg;
+  }
+  if (t === 'shrine') { const e = c.R; if (!e) return '...'; applyE(e); return e.msg; }
+  if (t === 'rest')   { const e = c.R; if (!e) return '...'; applyE(e); return e.msg; }
+  if (t === 'merchant') {
+    S.gold -= c.price; S.hp = Math.min(S.mhp, S.hp + 8);
+    S.waage = Math.max(-8, S.waage - 1);
+    return 'Heiltrank gekauft. +8 LP. (' + S.gold + ' Gold verbleiben)';
+  }
+  return '...';
+}
+
+function doSwipe(dir) {
+  if (S.locked) return;
+  const c = S.card; if (!c) return;
+  if (c.type === 'boss' && dir === 'left') {
+    shake(); setMsg('Es gibt kein Entkommen. Du musst kämpfen!'); return;
+  }
+  if (c.type === 'merchant' && dir === 'right' && S.gold < c.price) {
+    shake(); setMsg('Nicht genug Gold! Du brauchst ' + c.price + ' Münzen.'); return;
+  }
+  if (c.type === 'shrine' && dir === 'right' && c.gcost && S.gold < c.gcost) {
+    shake(); setMsg('Nicht genug Gold für dieses Opfer!'); return;
+  }
+  S.locked = true;
+  const card = document.getElementById('the-card');
+  card.style.transition = 'transform 0.32s ease, opacity 0.32s';
+  card.style.transform  = 'translateX(' + (dir === 'right' ? 440 : -440) + 'px) rotate(' + (dir === 'right' ? 18 : -18) + 'deg)';
+  card.style.opacity    = '0';
+  const msg = dir === 'left' ? resolveL(c) : resolveR(c);
+  setMsg(msg); renderHUD();
+  if (S.hp <= 0) { setTimeout(showDead, 880); return; }
+  if (c.type === 'boss' && S.floor === 12 && dir === 'right') { setTimeout(showWin, 880); return; }
+  setTimeout(() => {
+    card.style.transition = 'none'; card.style.transform = ''; card.style.opacity = '1';
+    S.floor++;
+    if (S.floor > 12) { showWin(); return; }
+    S.card = genCard(); render(); renderHUD(); S.locked = false;
+  }, 580);
+}
+
+function shake() {
+  const card = document.getElementById('the-card');
+  const seq = ['-12px','10px','-6px','0'];
+  let i = 0;
+  const run = () => { card.style.transition='transform 0.07s'; card.style.transform='translateX('+seq[i]+')'; if(++i<seq.length) setTimeout(run,70); };
+  run();
+}
+
+let sx = 0, dragging = false;
+const THRESH = 68;
+let inputReady = false;
+
+function setupInput() {
+  if (inputReady) return; inputReady = true;
+  const card = document.getElementById('the-card');
+
+  card.addEventListener('mousedown', e => {
+    if (S.locked) return; dragging = true; sx = e.clientX;
+    card.style.transition = 'none'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging || S.locked) return;
+    const dx = e.clientX - sx;
+    card.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx * 0.038) + 'deg)';
+    const p = Math.min(1, Math.abs(dx) / THRESH);
+    document.getElementById('hint-l').style.opacity = dx < 0 ? p * 0.9 : 0;
+    document.getElementById('hint-r').style.opacity = dx > 0 ? p * 0.9 : 0;
+  });
+  window.addEventListener('mouseup', e => {
+    if (!dragging) return; dragging = false;
+    document.getElementById('hint-l').style.opacity = 0;
+    document.getElementById('hint-r').style.opacity = 0;
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) >= THRESH) { doSwipe(dx > 0 ? 'right' : 'left'); }
+    else { card.style.transition = 'transform 0.24s ease'; card.style.transform = ''; }
+  });
+
+  card.addEventListener('touchstart', e => {
+    if (S.locked) return; dragging = true; sx = e.touches[0].clientX;
+    card.style.transition = 'none';
+  }, { passive: true });
+  card.addEventListener('touchmove', e => {
+    if (!dragging || S.locked) return;
+    const dx = e.touches[0].clientX - sx;
+    card.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx * 0.038) + 'deg)';
+    const p = Math.min(1, Math.abs(dx) / THRESH);
+    document.getElementById('hint-l').style.opacity = dx < 0 ? p * 0.9 : 0;
+    document.getElementById('hint-r').style.opacity = dx > 0 ? p * 0.9 : 0;
+  }, { passive: true });
+  card.addEventListener('touchend', e => {
+    if (!dragging) return; dragging = false;
+    document.getElementById('hint-l').style.opacity = 0;
+    document.getElementById('hint-r').style.opacity = 0;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) >= THRESH) { doSwipe(dx > 0 ? 'right' : 'left'); }
+    else { card.style.transition = 'transform 0.24s ease'; card.style.transform = ''; }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('s-game').classList.contains('on')) return;
+    if (e.key === 'ArrowLeft')  doSwipe('left');
+    if (e.key === 'ArrowRight') doSwipe('right');
+  });
+}
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById('s-' + id).classList.add('on');
+}
+
+function startGame(cls) {
+  initS(cls);
+  S.card = genCard();
+  go('game');
+  render(); renderHUD();
+  setMsg('← Pfeiltaste links / rechts → oder Karte ziehen.');
+  setupInput();
+}
+
+function showDead() {
+  document.getElementById('d-floor').textContent = S.floor;
+  document.getElementById('d-gold').textContent  = S.gold;
+  go('death');
+}
+
+function showWin() {
+  document.getElementById('v-gold').textContent = S.gold;
+  document.getElementById('v-atk').textContent  = S.atk;
+  go('victory');
+}
+</script>
+</body>
+</html>
