@@ -6,220 +6,120 @@
 <title>Swipe Dungeon</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0d0a06;--parchment:#f5e8c0;--ink:#120800;--ink2:#2a1608;
-  --accent:#c07018;--gold:#e0b020;--dim:#a07848;--border:#9a7020;
-  --neutral:#c09840;--neutral-bg:rgba(192,152,64,0.12);--neutral-border:rgba(192,152,64,0.45);
-}
+:root{--bg:#0d0a06;--parchment:#f5e8c0;--ink:#120800;--ink2:#2a1608;--accent:#c07018;--gold:#e0b020;--dim:#a07848;--border:#9a7020;--nb:rgba(192,152,64,0.12);--nbrd:rgba(192,152,64,0.45);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{
-  width:100%;height:100%;overflow:hidden;background:var(--bg);
-  font-family:'Crimson Text',Georgia,serif;color:#e8d090;
-  display:flex;align-items:center;justify-content:center;user-select:none;
-}
-.screen{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity 0.3s;padding:16px;
-}
+html{height:100%;}
+body{width:100%;height:calc(var(--vh,1vh)*100);overflow:hidden;background:var(--bg);font-family:'Crimson Text',Georgia,serif;color:#e8d090;display:flex;align-items:center;justify-content:center;user-select:none;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:16px;}
 .screen.on{opacity:1;pointer-events:all;}
 
-/* ── MUTE BTN ───────────────────────────── */
-#mute-btn{
-  position:fixed;top:12px;right:14px;z-index:100;
-  background:rgba(10,7,3,0.7);border:1px solid rgba(192,152,64,0.35);
-  border-radius:50%;width:36px;height:36px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;transition:background 0.2s;
-}
-#mute-btn:hover{background:rgba(30,18,8,0.9);}
-
-/* ── TITLE ─────────────────────────────── */
-.t-title{
-  font-family:'Cinzel',serif;font-size:clamp(42px,10vw,66px);font-weight:900;
-  color:var(--gold);text-align:center;line-height:1.05;
-  text-shadow:0 0 60px rgba(224,176,32,0.18);
-}
-.t-sub{font-size:clamp(16px,4vw,20px);font-style:italic;color:var(--dim);margin-top:14px;text-align:center;}
-.t-deco{color:rgba(192,112,24,0.28);font-family:'Cinzel',serif;font-size:12px;letter-spacing:8px;margin-top:24px;}
-.btn{
-  font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;background:transparent;
-  border:1px solid var(--accent);color:var(--gold);padding:13px 40px;cursor:pointer;
-  transition:all 0.2s;margin-top:32px;
-}
+.t-title{font-family:'Cinzel',serif;font-size:clamp(40px,10vw,64px);font-weight:900;color:var(--gold);text-align:center;line-height:1.05;text-shadow:0 0 60px rgba(224,176,32,0.18);}
+.t-sub{font-size:clamp(15px,4vw,19px);font-style:italic;color:var(--dim);margin-top:14px;text-align:center;}
+.t-deco{color:rgba(192,112,24,0.28);font-family:'Cinzel',serif;font-size:12px;letter-spacing:8px;margin-top:22px;}
+.btn{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;background:transparent;border:1px solid var(--accent);color:var(--gold);padding:13px 40px;cursor:pointer;transition:all 0.2s;margin-top:30px;}
 .btn:hover{background:rgba(192,112,24,0.14);border-color:var(--gold);}
 .btn:active{transform:scale(0.97);}
-.btn-sm{font-size:12px;padding:10px 28px;margin-top:18px;}
+.btn-sm{font-size:12px;padding:10px 26px;margin-top:16px;}
 
-/* ── CLASS SELECT ───────────────────────── */
-.s-head{
-  font-family:'Cinzel',serif;font-size:clamp(17px,4vw,22px);
-  font-weight:700;color:var(--gold);margin-bottom:18px;text-align:center;
-}
-.cls-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:480px;}
-.cls-btn{
-  background:rgba(18,12,5,0.88);border:1px solid rgba(192,112,24,0.3);
-  border-radius:2px;padding:14px;cursor:pointer;transition:all 0.18s;text-align:left;
-}
+.s-head{font-family:'Cinzel',serif;font-size:clamp(17px,4vw,21px);font-weight:700;color:var(--gold);margin-bottom:16px;text-align:center;}
+.cls-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:460px;}
+.cls-btn{background:rgba(18,12,5,0.88);border:1px solid rgba(192,112,24,0.3);border-radius:2px;padding:13px;cursor:pointer;transition:all 0.18s;text-align:left;}
 .cls-btn:hover{border-color:var(--accent);background:rgba(35,22,8,0.92);}
-.cls-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px;}
-.cls-role{font-size:12px;font-style:italic;color:var(--dim);margin-bottom:9px;}
+.cls-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.cls-role{font-size:12px;font-style:italic;color:var(--dim);margin-bottom:8px;}
 .cls-stats{display:flex;flex-wrap:wrap;gap:4px;}
-.cs{font-size:11px;color:#c09848;background:rgba(192,160,60,0.09);padding:3px 8px;border-radius:1px;}
+.cs{font-size:11px;color:#c09848;background:rgba(192,160,60,0.09);padding:3px 7px;border-radius:1px;}
 
-/* ── GAME LAYOUT ────────────────────────── */
-#s-game{justify-content:flex-start;padding:0;gap:0;}
-
-/* HUD */
-.hud{
-  width:100%;max-width:420px;padding:10px 16px 6px;
-  display:flex;justify-content:space-between;align-items:flex-start;
-  flex-shrink:0;
-}
+#s-game{justify-content:flex-start;padding:0;}
+.hud{width:100%;max-width:420px;padding:8px 13px 5px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-shrink:0;}
+.hud-left{display:flex;flex-direction:column;gap:1px;}
 .floor-lbl{font-family:'Cinzel',serif;font-size:12px;color:var(--accent);letter-spacing:1px;}
-.floor-depth{font-size:11px;color:#7a5830;margin-top:2px;}
-.wrow{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+.floor-depth{font-size:11px;color:#7a5830;}
+.hud-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+#mute-btn{background:rgba(10,7,3,0.6);border:1px solid rgba(192,152,64,0.3);border-radius:2px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px;flex-shrink:0;transition:all 0.2s;line-height:1;}
+#mute-btn:hover{background:rgba(30,18,8,0.85);color:var(--gold);}
+.waage-wrap{display:flex;flex-direction:column;align-items:flex-end;}
+.wrow{display:flex;align-items:center;gap:5px;}
 .wlbl{font-size:10px;color:#7a5830;}
-.wtrack{width:72px;height:5px;background:#160e05;border:0.5px solid rgba(192,160,60,0.2);border-radius:3px;overflow:hidden;position:relative;}
-.wbar-l{position:absolute;left:0;top:0;height:5px;background:#8a1414;border-radius:2px 0 0 2px;transition:width 0.4s;}
-.wbar-r{position:absolute;right:0;top:0;height:5px;background:#145020;border-radius:0 2px 2px 0;transition:width 0.4s;}
-.wstatus{font-size:10px;color:#6a4820;font-style:italic;margin-top:2px;text-align:right;}
+.wtrack{width:54px;height:4px;background:#160e05;border:0.5px solid rgba(192,160,60,0.18);border-radius:2px;overflow:hidden;position:relative;}
+.wbar-l{position:absolute;left:0;top:0;height:4px;background:#8a1414;border-radius:2px 0 0 2px;transition:width 0.4s;}
+.wbar-r{position:absolute;right:0;top:0;height:4px;background:#145020;border-radius:0 2px 2px 0;transition:width 0.4s;}
+.wstatus{font-size:9px;color:#6a4820;font-style:italic;margin-top:2px;text-align:right;}
 
-/* CARD STAGE */
-.cstage{
-  flex:1;width:100%;max-width:420px;
-  display:flex;align-items:center;justify-content:center;
-  position:relative;min-height:0;padding:4px 0;
-}
-.hint{
-  position:absolute;top:50%;transform:translateY(-50%);
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;
-  opacity:0;transition:opacity 0.1s;pointer-events:none;
-  text-align:center;line-height:1.7;color:var(--neutral);
-}
-.hint-l{left:6px;}
-.hint-r{right:6px;}
+.cstage{flex:1;width:100%;max-width:420px;display:flex;align-items:center;justify-content:center;position:relative;min-height:0;}
+.hint{position:absolute;top:50%;transform:translateY(-50%);font-family:'Cinzel',serif;font-size:13px;letter-spacing:1px;opacity:0;transition:opacity 0.1s;pointer-events:none;text-align:center;color:rgba(224,176,32,0.65);}
+.hint-l{left:5px;} .hint-r{right:5px;}
 
-/* THE CARD */
-.card{
-  background:var(--parchment);border:1px solid var(--border);
-  border-radius:3px;overflow:hidden;cursor:grab;position:relative;
-  transform-origin:center 88%;
-  box-shadow:0 8px 32px rgba(0,0,0,0.8),0 2px 6px rgba(0,0,0,0.5);
-  width:min(310px, 88vw);
-  flex-shrink:0;
-}
+.card{background:var(--parchment);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:grab;position:relative;transform-origin:center 88%;box-shadow:0 8px 32px rgba(0,0,0,0.8),0 2px 6px rgba(0,0,0,0.5);width:min(296px,85vw);flex-shrink:0;}
 .card:active{cursor:grabbing;}
-.c-art{
-  width:100%;aspect-ratio:4/3;overflow:hidden;position:relative;
-  background:#1a1008;
-}
-.c-art img{
-  width:100%;height:100%;object-fit:cover;display:block;
-}
-.c-art::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom,transparent 50%,rgba(6,3,0,0.65));
-}
-.c-type-lbl{
-  position:absolute;top:9px;left:9px;z-index:2;
-  font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;
-  background:rgba(6,3,0,0.75);color:#d0a840;padding:3px 8px;border-radius:1px;
-}
-.c-body{padding:11px 13px 10px;}
-.c-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:5px;}
-.c-text{font-size:13px;font-style:italic;color:var(--ink2);line-height:1.55;min-height:48px;}
+.c-art{width:100%;aspect-ratio:4/3;overflow:hidden;position:relative;background:#1a1008;}
+.c-art img{width:100%;height:100%;object-fit:cover;display:block;}
+.c-art::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(6,3,0,0.68));}
+.c-type-lbl{position:absolute;top:8px;left:8px;z-index:2;font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;background:rgba(6,3,0,0.78);color:#d0a840;padding:2px 7px;border-radius:1px;}
+.c-body{padding:9px 11px 8px;}
+.c-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.c-text{font-size:13px;font-style:italic;color:var(--ink2);line-height:1.5;min-height:44px;}
 
-/* SWIPE ACTION BUTTONS */
-.swipe-actions{
-  width:100%;max-width:420px;padding:8px 14px 6px;
-  display:flex;gap:8px;flex-shrink:0;
-}
-.sa-btn{
-  flex:1;background:var(--neutral-bg);border:1px solid var(--neutral-border);
-  color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;
-  padding:10px 8px;cursor:pointer;transition:all 0.18s;
-  border-radius:2px;text-align:center;line-height:1.45;
-}
-.sa-btn:hover{background:rgba(192,152,64,0.2);border-color:var(--neutral);}
+.swipe-actions{width:100%;max-width:420px;padding:6px 12px 5px;display:flex;gap:7px;flex-shrink:0;}
+.sa-btn{flex:1;background:var(--nb);border:1px solid var(--nbrd);color:var(--gold);font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.5px;padding:10px 5px;cursor:pointer;transition:all 0.18s;border-radius:2px;text-align:center;line-height:1.4;min-height:44px;}
+.sa-btn:hover{background:rgba(192,152,64,0.2);border-color:#c09840;}
 .sa-btn:active{transform:scale(0.98);}
-.sa-btn.disabled{opacity:0.3;cursor:not-allowed;}
+.sa-btn.disabled{opacity:0.25;cursor:not-allowed;}
 
-/* STATS BAR */
-.sbar{
-  width:100%;max-width:420px;background:#0d0b07;
-  border-top:1px solid rgba(192,160,60,0.12);
-  padding:10px 14px 10px;display:flex;gap:6px;align-items:stretch;
-  flex-shrink:0;
-}
-/* HP — hero stat */
-.stat-hp{
-  flex:2;display:flex;flex-direction:column;gap:4px;
-  background:rgba(100,10,10,0.2);border:0.5px solid rgba(160,20,20,0.3);
-  border-radius:3px;padding:7px 10px;position:relative;
-}
-.stat-hp-icon{font-size:18px;line-height:1;color:#d03030;}
-.stat-hp-bar-bg{width:100%;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
-.stat-hp-bar{height:5px;background:#b01818;border-radius:3px;transition:width 0.4s;}
-.stat-hp-val{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#e03030;line-height:1;}
+.sbar{width:100%;max-width:420px;background:#0d0b07;border-top:1px solid rgba(192,160,60,0.12);padding:7px 11px;display:flex;gap:4px;align-items:stretch;flex-shrink:0;}
+.stat-hp{flex:2;display:flex;flex-direction:column;gap:3px;background:rgba(100,10,10,0.22);border:0.5px solid rgba(160,20,20,0.35);border-radius:3px;padding:6px 8px;}
+.stat-hp-row{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.stat-hp-icon{font-size:16px;line-height:1;color:#d03030;}
+.stat-hp-val{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#e03030;line-height:1;}
+.stat-hp-lbl{font-size:9px;color:#6a3030;letter-spacing:0.5px;}
+.stat-hp-bar-bg{width:100%;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.stat-hp-bar{height:4px;background:#b01818;border-radius:2px;transition:width 0.4s;}
+.stat-box{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:rgba(192,152,64,0.07);border:0.5px solid rgba(192,152,64,0.2);border-radius:3px;padding:5px 2px;}
+.stat-icon{font-size:16px;line-height:1;}
+.stat-val{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);}
+.stat-lbl{font-size:8px;color:#6a4820;letter-spacing:0.5px;}
+.stat-luck{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:rgba(240,200,40,0.1);border:0.5px solid rgba(240,200,40,0.4);border-radius:3px;padding:5px 2px;animation:lPulse 1.8s ease-in-out infinite;}
+.stat-luck.on{display:flex;}
+@keyframes lPulse{0%,100%{border-color:rgba(240,200,40,0.4)}50%{border-color:rgba(240,200,40,0.8);box-shadow:0 0 6px rgba(240,200,40,0.2)}}
 
-/* Other stats */
-.stat-box{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  background:rgba(192,152,64,0.06);border:0.5px solid rgba(192,152,64,0.18);
-  border-radius:3px;padding:7px 4px;position:relative;
-}
-.stat-icon{font-size:18px;line-height:1;}
-.stat-val{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--gold);}
-.stat-lbl{font-size:9px;color:#6a4820;letter-spacing:1px;}
+#result-overlay{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,3,0,0.84);opacity:0;pointer-events:none;transition:opacity 0.22s;padding:24px;gap:12px;cursor:pointer;}
+#result-overlay.show{opacity:1;pointer-events:all;}
+#result-icon{font-size:46px;line-height:1;}
+#result-narrative{font-size:clamp(14px,3.8vw,16px);font-style:italic;color:#f0e0a0;text-align:center;line-height:1.65;max-width:300px;}
+#result-deltas{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+.rdelta{font-family:'Cinzel',serif;font-size:16px;font-weight:700;padding:3px 11px;border-radius:2px;background:rgba(255,255,255,0.05);}
+.rdelta.pos{color:#6de06d;} .rdelta.neg{color:#e05050;}
+#result-tap{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:rgba(192,152,64,0.45);margin-top:6px;}
 
-/* ── RESULT OVERLAY ─────────────────────── */
-#result-overlay{
-  position:fixed;inset:0;z-index:50;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:rgba(6,4,1,0.72);
-  opacity:0;pointer-events:none;transition:opacity 0.2s;
-  padding:24px;
-}
-#result-overlay.show{opacity:1;}
-#result-icon{font-size:52px;line-height:1;margin-bottom:14px;}
-#result-msg{
-  font-size:clamp(15px,4vw,18px);font-style:italic;color:#f0e0a0;
-  text-align:center;line-height:1.6;max-width:320px;
-}
-#result-deltas{
-  display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;justify-content:center;
-}
-.rdelta{
-  font-family:'Cinzel',serif;font-size:18px;font-weight:700;
-  padding:4px 14px;border-radius:2px;
-  background:rgba(255,255,255,0.06);
-}
-.rdelta.pos{color:#68d068;}
-.rdelta.neg{color:#e05050;}
-
-/* ── RESULTS SCREENS ────────────────────── */
 #s-death,#s-victory{gap:14px;}
-.rtitle{font-family:'Cinzel',serif;font-size:clamp(30px,8vw,54px);font-weight:900;text-align:center;}
+.rtitle{font-family:'Cinzel',serif;font-size:clamp(28px,8vw,52px);font-weight:900;text-align:center;}
 #s-death .rtitle{color:#7a1010;}
 #s-victory .rtitle{color:var(--gold);text-shadow:0 0 40px rgba(224,176,32,0.22);}
-.rbody{font-size:clamp(14px,4vw,17px);font-style:italic;color:var(--dim);text-align:center;max-width:320px;line-height:1.65;}
-.rstats{display:flex;gap:32px;margin-top:8px;}
+.rbody{font-size:clamp(14px,4vw,16px);font-style:italic;color:var(--dim);text-align:center;max-width:300px;line-height:1.65;}
+.rstats{display:flex;gap:30px;margin-top:8px;}
 .rsitem{text-align:center;}
-.rsval{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--gold);}
+.rsval{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--gold);}
 .rslbl{font-size:11px;color:#6a4820;}
 
-/* ── ANIMATIONS ─────────────────────────── */
-@keyframes cIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:none}}
-.card-in{animation:cIn 0.25s ease-out;}
+/* ── SUPER SWIPE ─────────────────────────── */
+.super-hint{display:none;width:100%;max-width:420px;text-align:center;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#f0d040;padding:3px 0;flex-shrink:0;}
+.super-hint.on{display:block;animation:sPulse 1.6s ease-in-out infinite;}
+@keyframes sPulse{0%,100%{opacity:0.55}50%{opacity:1;text-shadow:0 0 10px rgba(240,200,40,0.55)}}
+.card.lucky{box-shadow:0 8px 32px rgba(0,0,0,0.8),0 0 18px rgba(240,200,40,0.22);}
+#result-overlay.super{background:rgba(12,7,0,0.92);}
+#result-overlay.super #result-icon{text-shadow:0 0 22px rgba(240,200,40,0.6);}
+#result-overlay.super #result-narrative{color:#f5e890;}
+#result-overlay.super #result-tap{color:rgba(240,200,40,0.5);}
+
+@keyframes cIn{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:none}}
+.card-in{animation:cIn 0.22s ease-out;}
+@keyframes statFlash{0%,100%{opacity:1}50%{opacity:0.3}}
+.stat-flash{animation:statFlash 0.35s ease-out 2;}
 </style>
 </head>
 <body>
-
-<button id="mute-btn" onclick="toggleMute()" title="Musik an/aus">🔊</button>
 <audio id="bgm" src="Titelmusik%201.mp3" loop preload="auto"></audio>
 
-<!-- TITLE -->
 <div id="s-title" class="screen on">
   <div class="t-title">Swipe<br>Dungeon</div>
   <div class="t-sub">Jeder Swipe verändert dein Schicksal.</div>
@@ -227,211 +127,553 @@ html,body{
   <button class="btn" onclick="go('classselect')">Betreten</button>
 </div>
 
-<!-- CLASS SELECT -->
 <div id="s-classselect" class="screen">
   <div class="s-head">Wähle deine Klasse</div>
   <div class="cls-grid">
-    <div class="cls-btn" onclick="startGame('krieger')">
-      <div class="cls-name">Eisenritter</div>
-      <div class="cls-role">Tanky &amp; unerschütterlich</div>
-      <div class="cls-stats"><span class="cs">LP 25</span><span class="cs">ATK 4</span><span class="cs">DEF 4</span><span class="cs">GLK 1</span></div>
-    </div>
-    <div class="cls-btn" onclick="startGame('ranger')">
-      <div class="cls-name">Waldläufer</div>
-      <div class="cls-role">Ausgewogen &amp; flexibel</div>
-      <div class="cls-stats"><span class="cs">LP 18</span><span class="cs">ATK 5</span><span class="cs">DEF 2</span><span class="cs">GLK 4</span></div>
-    </div>
-    <div class="cls-btn" onclick="startGame('schurke')">
-      <div class="cls-name">Schattenkind</div>
-      <div class="cls-role">Riskant &amp; glückabhängig</div>
-      <div class="cls-stats"><span class="cs">LP 15</span><span class="cs">ATK 7</span><span class="cs">DEF 1</span><span class="cs">GLK 5</span></div>
-    </div>
-    <div class="cls-btn" onclick="startGame('magier')">
-      <div class="cls-name">Runensage</div>
-      <div class="cls-role">Mächtig &amp; fragil</div>
-      <div class="cls-stats"><span class="cs">LP 12</span><span class="cs">ATK 6</span><span class="cs">DEF 2</span><span class="cs">GLK 3</span></div>
-    </div>
+    <div class="cls-btn" onclick="startGame('krieger')"><div class="cls-name">Eisenritter</div><div class="cls-role">Tanky &amp; unerschütterlich</div><div class="cls-stats"><span class="cs">LP 25</span><span class="cs">ATK 4</span><span class="cs">DEF 4</span><span class="cs">GLK 1</span></div></div>
+    <div class="cls-btn" onclick="startGame('ranger')"><div class="cls-name">Waldläufer</div><div class="cls-role">Ausgewogen &amp; flexibel</div><div class="cls-stats"><span class="cs">LP 18</span><span class="cs">ATK 5</span><span class="cs">DEF 2</span><span class="cs">GLK 4</span></div></div>
+    <div class="cls-btn" onclick="startGame('schurke')"><div class="cls-name">Schattenkind</div><div class="cls-role">Riskant &amp; glückabhängig</div><div class="cls-stats"><span class="cs">LP 15</span><span class="cs">ATK 7</span><span class="cs">DEF 1</span><span class="cs">GLK 5</span></div></div>
+    <div class="cls-btn" onclick="startGame('magier')"><div class="cls-name">Runensage</div><div class="cls-role">Mächtig &amp; fragil</div><div class="cls-stats"><span class="cs">LP 12</span><span class="cs">ATK 6</span><span class="cs">DEF 2</span><span class="cs">GLK 3</span></div></div>
   </div>
   <button class="btn btn-sm" onclick="go('title')">← Zurück</button>
 </div>
 
-<!-- GAME -->
 <div id="s-game" class="screen">
   <div class="hud">
-    <div>
+    <div class="hud-left">
       <div class="floor-lbl" id="h-floor">Etage 1 / 12</div>
       <div class="floor-depth" id="h-depth">Obere Katakomben</div>
     </div>
-    <div>
-      <div class="wrow">
-        <span class="wlbl">Kühn</span>
-        <div class="wtrack"><div class="wbar-l" id="w-l"></div><div class="wbar-r" id="w-r"></div></div>
-        <span class="wlbl">Besonnen</span>
+    <div class="hud-right">
+      <button id="mute-btn" onclick="toggleMute()" title="Musik">♫</button>
+      <div class="waage-wrap">
+        <div class="wrow"><span class="wlbl">Kühn</span><div class="wtrack"><div class="wbar-l" id="w-l"></div><div class="wbar-r" id="w-r"></div></div><span class="wlbl">Besonnen</span></div>
+        <div class="wstatus" id="w-status">Ausgeglichen</div>
       </div>
-      <div class="wstatus" id="w-status">Ausgeglichen</div>
     </div>
   </div>
-
-  <div class="cstage" id="cstage">
+  <div class="cstage">
     <div class="hint hint-l" id="hint-l">←</div>
     <div class="hint hint-r" id="hint-r">→</div>
     <div class="card" id="the-card">
-      <div class="c-art" id="c-art">
-        <img id="c-img" src="" alt="">
-        <div class="c-type-lbl" id="c-type-lbl"></div>
-      </div>
-      <div class="c-body">
-        <div class="c-title" id="c-title"></div>
-        <div class="c-text" id="c-text"></div>
-      </div>
+      <div class="c-art"><img id="c-img" src="" alt=""><div class="c-type-lbl" id="c-type-lbl"></div></div>
+      <div class="c-body"><div class="c-title" id="c-title"></div><div class="c-text" id="c-text"></div></div>
     </div>
   </div>
-
   <div class="swipe-actions">
     <button class="sa-btn" id="sa-l" onclick="doSwipe('left')"></button>
     <button class="sa-btn" id="sa-r" onclick="doSwipe('right')"></button>
   </div>
-
+  <div class="super-hint" id="super-hint">↑ Super Swipe verfügbar</div>
   <div class="sbar">
-    <div class="stat-hp" id="box-hp">
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
-        <span class="stat-hp-icon">♥</span>
-        <span class="stat-hp-val" id="s-hp">—</span>
-        <span class="stat-lbl" style="color:#6a3030;font-size:9px;letter-spacing:1px;">LP</span>
-      </div>
+    <div class="stat-hp">
+      <div class="stat-hp-row"><span class="stat-hp-icon">♥</span><span class="stat-hp-val" id="s-hp">—</span><span class="stat-hp-lbl">LP</span></div>
       <div class="stat-hp-bar-bg"><div class="stat-hp-bar" id="hp-fill"></div></div>
     </div>
-    <div class="stat-box" id="box-atk">
-      <div class="stat-icon">⚔</div>
-      <div class="stat-val" id="s-atk">—</div>
-      <div class="stat-lbl">ATK</div>
-    </div>
-    <div class="stat-box" id="box-def">
-      <div class="stat-icon">🛡</div>
-      <div class="stat-val" id="s-def">—</div>
-      <div class="stat-lbl">DEF</div>
-    </div>
-    <div class="stat-box" id="box-gold">
-      <div class="stat-icon" style="color:var(--gold)">◈</div>
-      <div class="stat-val" id="s-gold" style="color:var(--gold)">—</div>
-      <div class="stat-lbl">GOLD</div>
-    </div>
+    <div class="stat-box" id="box-atk"><div class="stat-icon">⚔</div><div class="stat-val" id="s-atk">—</div><div class="stat-lbl">ATK</div></div>
+    <div class="stat-box" id="box-def"><div class="stat-icon">🛡</div><div class="stat-val" id="s-def">—</div><div class="stat-lbl">DEF</div></div>
+    <div class="stat-box" id="box-gold"><div class="stat-icon" style="color:var(--gold)">◈</div><div class="stat-val" id="s-gold" style="color:var(--gold)">—</div><div class="stat-lbl">GOLD</div></div>
+    <div class="stat-luck" id="box-luck"><div class="stat-icon" style="color:#f0d040">✦</div><div class="stat-val" id="s-luck" style="color:#f0d040">—</div><div class="stat-lbl" style="color:#8a6820">GLK</div></div>
   </div>
 </div>
 
-<!-- RESULT OVERLAY -->
-<div id="result-overlay">
+<div id="result-overlay" onclick="dismissResult()">
   <div id="result-icon"></div>
-  <div id="result-msg"></div>
+  <div id="result-narrative"></div>
   <div id="result-deltas"></div>
+  <div id="result-tap">— tippe um fortzufahren —</div>
 </div>
 
-<!-- DEATH -->
 <div id="s-death" class="screen">
   <div class="rtitle">Du bist gefallen.</div>
-  <div class="rbody">Das Dungeon hat dich verschluckt. Deine Knochen ruhen nun neben vielen anderen Abenteurern.</div>
-  <div class="rstats">
-    <div class="rsitem"><div class="rsval" id="d-floor">—</div><div class="rslbl">Etage</div></div>
-    <div class="rsitem"><div class="rsval" id="d-gold-r">—</div><div class="rslbl">Gold</div></div>
-  </div>
+  <div class="rbody">Das Dungeon hat dich verschluckt. Deine Knochen ruhen neben vielen anderen Abenteurern.</div>
+  <div class="rstats"><div class="rsitem"><div class="rsval" id="d-floor">—</div><div class="rslbl">Etage</div></div><div class="rsitem"><div class="rsval" id="d-gold-r">—</div><div class="rslbl">Gold</div></div></div>
   <button class="btn btn-sm" onclick="go('classselect')">Erneut wagen</button>
 </div>
 
-<!-- VICTORY -->
 <div id="s-victory" class="screen">
   <div class="rtitle">Dungeon besiegt!</div>
   <div class="rbody">Du hast die Tiefen durchquert und das Licht wieder erblickt. Legenden werden von dir gesungen.</div>
-  <div class="rstats">
-    <div class="rsitem"><div class="rsval" id="v-gold">—</div><div class="rslbl">Gold</div></div>
-    <div class="rsitem"><div class="rsval" id="v-atk">—</div><div class="rslbl">Final ATK</div></div>
-  </div>
+  <div class="rstats"><div class="rsitem"><div class="rsval" id="v-gold">—</div><div class="rslbl">Gold</div></div><div class="rsitem"><div class="rsval" id="v-atk">—</div><div class="rslbl">Final ATK</div></div></div>
   <button class="btn btn-sm" onclick="go('classselect')">Neues Abenteuer</button>
 </div>
 
 <script>
+function setVH(){document.documentElement.style.setProperty('--vh',window.innerHeight*0.01+'px');}
+window.addEventListener('resize',setVH);setVH();
+
 const bgm=document.getElementById('bgm');
-let muted=false,musicStarted=false;
-function startMusic(){if(musicStarted)return;bgm.volume=0.55;bgm.play().then(()=>{musicStarted=true;}).catch(()=>{});}
-function toggleMute(){muted=!muted;bgm.muted=muted;document.getElementById('mute-btn').textContent=muted?'🔇':'🔊';if(!muted&&!musicStarted)startMusic();}
-window.addEventListener('load',()=>{bgm.volume=0.55;bgm.play().then(()=>{musicStarted=true;}).catch(()=>{const u=()=>{startMusic();document.removeEventListener('click',u);document.removeEventListener('touchstart',u);};document.addEventListener('click',u);document.addEventListener('touchstart',u);});});
+let muted=false,musicStarted=false,_ac=null;
+function getAC(){if(!_ac)_ac=new(window.AudioContext||window.webkitAudioContext)();if(_ac.state==='suspended')_ac.resume();return _ac;}
+function tone(f,t,d,v,del){if(muted)return;setTimeout(()=>{try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.start();o.stop(c.currentTime+d+0.05);}catch(e){}},del||0);}
+function sfx(n){
+  if(!n||muted)return;
+  switch(n){
+    case 'sword':  tone(290,'sawtooth',0.08,0.38);tone(210,'sawtooth',0.12,0.28,65);break;
+    case 'damage': tone(130,'sawtooth',0.22,0.42);tone(90,'square',0.14,0.26,90);break;
+    case 'coin':   tone(880,'sine',0.08,0.3);tone(1100,'sine',0.1,0.18,72);break;
+    case 'heal':   tone(440,'sine',0.14,0.28);tone(528,'sine',0.18,0.22,100);tone(660,'sine',0.22,0.16,200);break;
+    case 'magic':  [660,784,880,1046].forEach((f,i)=>tone(f,'sine',0.1,0.2,i*55));break;
+    case 'flee':   tone(440,'triangle',0.1,0.22);tone(330,'triangle',0.14,0.18,85);break;
+    case 'chest':  tone(550,'sine',0.07,0.3);tone(730,'sine',0.1,0.22,55);break;
+    case 'fail':   tone(220,'square',0.12,0.32);tone(150,'square',0.18,0.22,95);break;
+    case 'boss':   [155,125,100].forEach((f,i)=>tone(f,'sawtooth',0.2,0.4,i*80));break;
+    case 'victory':[523,659,784,1047].forEach((f,i)=>tone(f,'sine',0.25,0.3,i*110));break;
+  }
+}
+function vib(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+function startMusic(){if(musicStarted)return;bgm.volume=0.5;bgm.play().then(()=>{musicStarted=true;}).catch(()=>{});}
+function toggleMute(){muted=!muted;bgm.muted=muted;document.getElementById('mute-btn').textContent=muted?'✕♫':'♫';if(!muted&&!musicStarted)startMusic();}
+window.addEventListener('load',()=>{bgm.volume=0.5;bgm.play().then(()=>{musicStarted=true;}).catch(()=>{const u=()=>{startMusic();document.removeEventListener('click',u);document.removeEventListener('touchstart',u);};document.addEventListener('click',u);document.addEventListener('touchstart',u);});});
 
 const CLS={krieger:{name:'Eisenritter',hp:25,atk:4,def:4,luck:1},ranger:{name:'Waldläufer',hp:18,atk:5,def:2,luck:4},schurke:{name:'Schattenkind',hp:15,atk:7,def:1,luck:5},magier:{name:'Runensage',hp:12,atk:6,def:2,luck:3}};
 const IMG={monster:'Kampf%20Monster%201.jpg',boss:'Boss%201.jpg',event:'Ergebnis%20Story%201.jpg',shrine:'Schrein%20Magie%201.jpg',treasure:'Schatzkammer%201.jpg',rest:'Rastplatz%20Lagerfeuer%201.jpg',merchant:'H%C3%A4ndler%201.jpg'};
 const TLBL={monster:'Kampf',boss:'BOSS',event:'Ereignis',shrine:'Schrein',treasure:'Schatzkammer',rest:'Rastplatz',merchant:'Händler'};
 
 const MON=[
-  {n:'Großratte',d:'Eine riesige Ratte mit blutunterlaufenen Augen starrt dich an.',hp:4,atk:2,g:5,max:6},
-  {n:'Skelettkrieger',d:'Knochen klappern in der Stille. Ein Skelett richtet sein verrottetes Schwert auf dich.',hp:6,atk:3,g:8,max:12},
-  {n:'Kobold-Räuber',d:'Ein hinterlistiger Kobold springt hinter einem Fels hervor und zückt seinen Dolch.',hp:5,atk:3,g:10,max:7},
-  {n:'Höhlentroll',d:'Ein Troll taucht aus der Dunkelheit auf. Sein Atem riecht nach altem Blut.',hp:8,atk:4,g:12,min:2,max:10},
-  {n:'Dunkelelf-Räuber',d:'Ein Dunkelelf tritt aus dem Schatten. Er will dein Gold — oder dein Leben.',hp:9,atk:5,g:15,min:3,max:10},
-  {n:'Steingolem',d:'Der Boden bebt. Ein Golem aus Stein und uralter Magie versperrt den Weg.',hp:14,atk:5,g:18,min:5},
-  {n:'Vampir',d:'Kalte Augen glühen im Dunkeln. Der Vampir lächelt und zeigt seine Fangzähne.',hp:12,atk:6,g:22,min:6},
-  {n:'Dämonenhund',d:'Höllisches Bellen hallt durch den Korridor. Zwei glühende Augen nähern sich.',hp:10,atk:7,g:16,min:7},
-  {n:'Geisterritter',d:'Eine geisterhafte Gestalt in zerbrochener Rüstung schwebt auf dich zu.',hp:11,atk:6,g:20,min:5}
+  {n:'Großratte',     d:'Eine riesige Ratte mit glühenden Augen starrt dich knurrend an.',           hp:4, atk:2,g:5, max:6,  lt:'← Ausweichen',          rt:'Zuschlagen →'},
+  {n:'Skelettkrieger',d:'Knochen klappern. Ein Skelett hebt sein verrottetes Schwert.',               hp:6, atk:3,g:8, max:12, lt:'← Zurückweichen',        rt:'Schwert kreuzen →'},
+  {n:'Kobold-Räuber', d:'Ein hinterlistiger Kobold springt aus dem Dunkel und zückt den Dolch.',     hp:5, atk:3,g:10,max:7,  lt:'← Finte einsetzen',      rt:'Direktangriff →'},
+  {n:'Höhlentroll',   d:'Ein Troll taucht aus der Dunkelheit auf. Sein Atem riecht nach Blut.',      hp:8, atk:4,g:12,min:2,max:10,lt:'← Fliehen',           rt:'Kämpfen →'},
+  {n:'Dunkelelf',     d:'Ein Dunkelelf tritt aus dem Schatten. Er will dein Gold — oder dein Leben.',hp:9, atk:5,g:15,min:3,max:10,lt:'← Ablenken',          rt:'Duell →'},
+  {n:'Steingolem',    d:'Der Boden bebt. Ein Golem aus Stein und Magie versperrt den Weg.',          hp:14,atk:5,g:18,min:5,       lt:'← Schwachstelle suchen',rt:'Voller Angriff →'},
+  {n:'Vampir',        d:'Kalte Augen glühen. Der Vampir lächelt und zeigt seine Fangzähne.',         hp:12,atk:6,g:22,min:6,       lt:'← Weihwasser nutzen',  rt:'Silberklinge →'},
+  {n:'Dämonenhund',   d:'Höllisches Bellen hallt durch den Korridor. Zwei glühende Augen rasen heran.',hp:10,atk:7,g:16,min:7,   lt:'← Zurückweichen',     rt:'Standhalten →'},
+  {n:'Geisterritter', d:'Eine geisterhafte Gestalt in zerbrochener Rüstung schwebt heran.',           hp:11,atk:6,g:20,min:5,       lt:'← Rückzug',           rt:'Geistbann →'}
 ];
+
 const BOSS=[
-  {n:'Kerkermeister Mordath',d:'Der Kerkermeister erscheint persönlich. Seine Rüstung ist bedeckt mit Schilden der Gefallenen.',hp:20,atk:7,g:45},
-  {n:'Hexe Malvara',d:'Eine Frau, deren Augen schwarz wie Teer sind. Sie spricht in einer Sprache, die Knochen bricht.',hp:26,atk:8,g:60},
-  {n:'Urzanthas, der Schlafende',d:'Ein uralter Drache öffnet ein einziges goldenes Auge. Schon sein Atem versengt deine Haut.',hp:35,atk:10,g:120}
+  {n:'Kerkermeister Mordath',
+   d:'Der Kerkermeister erscheint persönlich. Seine Rüstung trägt die Schilde der Gefallenen.',
+   hp:20,atk:7,g:45,bi:0,lt:'← Sturmangriff',rt:'Taktisch kämpfen →',
+   lWin:'Dein Sturmangriff durchbricht Mordaths Rüstung! Er taumelt. Du blutest, aber er fällt.',
+   lLose:'Mordath pariert und schlägt brutal zurück. Du hast zu viel riskiert.',
+   rWin:'Besonnen und präzise — du findest Mordaths Lücken und triffst tödlich.',
+   rLose:'Mordath setzt dir zu, aber deine Defensive hält. Du überlebst den Kampf.'},
+  {n:'Hexe Malvara',
+   d:'Eine Frau, deren Augen schwarz wie Teer sind. Sie spricht in einer Sprache, die Knochen bricht.',
+   hp:26,atk:8,g:60,bi:1,lt:'← Fluch reflektieren',rt:'Körperkampf →',
+   lWin:'Du richtest Malvaras Fluch gegen sie selbst. Sie schreit auf. Magie erfüllt die Luft.',
+   lLose:'Der Fluch zersplittert — und trifft dich mit voller Wucht. Fehler.',
+   rWin:'Durch ihre magischen Barrieren gebrochen — du besiegst sie mit Stahl.',
+   rLose:'Die Hexe setzt dir magisch zu, aber dein Körper hält stand.'},
+  {n:'Urzanthas, der Schlafende',
+   d:'Ein uralter Drache öffnet ein einziges goldenes Auge. Schon sein Atem versengt deine Haut.',
+   hp:35,atk:10,g:120,bi:2,lt:'← Schwachpunkt suchen',rt:'Voller Angriff →',
+   lWin:'Du findest die ungeschützte Stelle unter dem Schuppenpanzer. Urzanthas brüllt und sinkt.',
+   lLose:'Der Drache schlägt zu bevor du die Schwachstelle triffst. Massive Wucht.',
+   rWin:'Mit allem Mut stürmst du den Drachen an. Er taumelt. Du blutest stark — aber er fällt.',
+   rLose:'Urzanthas schlägt mit dem Schwanz zurück. Du fliegst. Aber du lebst noch.'}
 ];
+
 const EVT=[
-  {n:'Verwundeter Soldat',d:'"Bitte... hilf mir. Ich kenne einen Geheimgang..."',lt:'← Weitergehen',rt:'Helfen →',L:{fate:-1,msg:'Du gehst vorbei. Sein letzter Atemzug hallt nach.'},R:{hp:-3,gold:10,fate:1,msg:'Du hilfst. Er gibt dir dankbar seinen Beutel.'}},
-  {n:'Flüsternde Stimme',d:'"Folge mir... ich zeige dir Schätze, die kein Sterblicher je sah."',lt:'← Ignorieren',rt:'Folgen →',L:{fate:1,msg:'Du ignorierst die Stimme. Besonnene Entscheidung.'},R:{lr:1,fate:-1,good:{gold:15,msg:'Die Stimme führte dich zu einem verborgenen Vorrat.'},bad:{hp:-5,msg:'Eine Falle. Die Stimme lacht böse.'}}},
-  {n:'Alter Bettler',d:'"Bitte, Herr... nur eine Münze für einen Hungernden."',lt:'← Ablehnen',rt:'Geben (−15 Gold) →',L:{fate:-1,msg:'Du gehst vorbei. Der Blick des Alten ist schwer.'},R:{gold:-15,luck:1,fate:1,msg:'Er drückt dir einen Glücksstein in die Hand.'}},
-  {n:'Geheimnisvolle Inschrift',d:'Alte Runen an der Wand pulsieren schwach. Dein Körper kribbelt seltsam.',lt:'← Weitergehen',rt:'Berühren →',L:{fate:1,msg:'Du gehst vorbei. Manche Rätsel sind besser ungelöst.'},R:{lr:1,fate:-1,good:{atk:1,msg:'Uralte Kampfkunst überträgt sich auf deine Muskeln.'},bad:{hp:-3,msg:'Ein Schmerzstoß durchfährt deinen Körper.'}}},
-  {n:'Gefangener Elf',d:'"Psst! Befreie mich — mein Volk belohnt das großzügig."',lt:'← Weitergehen',rt:'Befreien →',L:{fate:-1,msg:'Du lässt ihn zurück. Sein enttäuschter Blick brennt.'},R:{hp:-2,gold:18,fate:1,msg:'Der Elf hinterlässt dankbar seinen Vorrat.'}},
-  {n:'Vergiftetes Wasser',d:'Klares Wasser im Brunnen — aber ein toter Vogel treibt obenauf.',lt:'← Nicht trinken',rt:'Trotzdem trinken →',L:{fate:1,msg:'Du widerstehst der Versuchung. Weise Zurückhaltung.'},R:{lr:1,fate:-1,good:{hp:5,msg:'Das Wasser war rein. Der Vogel starb natürlich.'},bad:{hp:-6,msg:'Gift! Du übergibst dich minutenlang.'}}}
+  {n:'Verwundeter Soldat',d:'"Bitte... hilf mir. Ich kenne einen Geheimgang..."',lt:'← Weitergehen',rt:'Helfen →',
+   L:{fate:-1,msg:'Du gehst vorbei. Sein letzter Atemzug hallt nach — und bleibt in deiner Erinnerung.'},
+   R:{hp:-3,gold:10,fate:1,msg:'Du verbindest seine Wunden. Mit zitternden Händen drückt er dir seinen Beutel. "Nimm es. Du hast mir das Leben gerettet."'}},
+  {n:'Flüsternde Stimme',d:'"Folge mir... ich zeige dir Schätze, die kein Sterblicher je sah."',lt:'← Ignorieren',rt:'Folgen →',
+   L:{fate:1,msg:'Du ignorierst die Stimme. Das Kribbeln bleibt kurz — dann verblasst es.'},
+   R:{lr:1,fate:-1,good:{gold:15,msg:'Die Stimme führt dich zu einem verborgenen Vorratslager. Goldmünzen schimmern. Heute war sie ehrlich.'},bad:{hp:-5,msg:'Die Stimme endet in Gelächter. Eine Steinplatte schlägt herab. Eine Falle.'}}},
+  {n:'Alter Bettler',d:'"Bitte, Herr... nur eine Münze für einen Hungernden."',lt:'← Ablehnen',rt:'Geben (−15 Gold) →',
+   L:{fate:-1,msg:'Du gehst vorbei. Der Blick des Alten verfolgt dich durch den Dungeon.'},
+   R:{gold:-15,luck:1,fate:1,msg:'Du gibst ihm Gold. Er lächelt wissend und drückt dir einen schwach glühenden Stein in die Hand. "Glück kennt seinen Weg."'}},
+  {n:'Geheimnisvolle Inschrift',d:'Alte Runen an der Wand pulsieren schwach. Dein Körper kribbelt seltsam.',lt:'← Weitergehen',rt:'Berühren →',
+   L:{fate:1,msg:'Du lässt die Runen in Ruhe. Manche Rätsel tragen mehr Gefahr als Wissen.'},
+   R:{lr:1,fate:-1,good:{atk:1,msg:'Beim Berühren fließt uralte Kampfkunst durch deinen Arm. +1 ATK.'},bad:{hp:-3,msg:'Die Runen brennen sich in deine Haut. Du reißt die Hand zurück — zu spät.'}}},
+  {n:'Gefangener Elf',d:'"Psst! Befreie mich — mein Volk belohnt das großzügig."',lt:'← Weitergehen',rt:'Befreien →',
+   L:{fate:-1,msg:'Du lässt ihn zurück. Sein enttäuschter Blick folgt dir noch lange.'},
+   R:{hp:-2,gold:18,fate:1,msg:'Du brichst die Ketten. Der Elf lässt dankbar seinen Vorratsbeutel fallen, bevor er ins Dunkel verschwindet.'}},
+  {n:'Vergiftetes Wasser',d:'Klares Wasser im Brunnen — aber ein toter Vogel treibt obenauf.',lt:'← Nicht trinken',rt:'Trotzdem trinken →',
+   L:{fate:1,msg:'Du vertraust deinem Instinkt und gehst weiter. Weise Zurückhaltung.'},
+   R:{lr:1,fate:-1,good:{hp:5,msg:'Das Wasser war rein. Du trinkst gierig. Wunden heilen leicht.'},bad:{hp:-6,msg:'Gift. Du übergibst dich minutenlang auf den Steinboden. Die Wände drehen sich.'}}}
 ];
+
 const SHR=[
-  {n:'Kriegsschrein',d:'Ein Altar aus alten Knochen und Waffen. Er verlangt ein Opfer.',lt:'← Ablehnen',rt:'Opfern (−3 LP → +1 ATK)',L:{fate:1,msg:'Du verweigerst das Opfer. Der Schrein bleibt stumm.'},R:{hp:-3,atk:1,fate:-1,msg:'Schmerz — dann Stärke.'}},
-  {n:'Schutzschrein',d:'Blaues Licht fließt über einen steinernen Altar. Er strahlt Wärme aus.',lt:'← Ablehnen',rt:'Opfern (−3 LP → +1 DEF)',L:{fate:-1,msg:'Du lehnst den Schutz ab.'},R:{hp:-3,def:1,fate:1,msg:'Ein Kribbeln umhüllt dich.'}},
-  {n:'Goldschrein',d:'"Gib, um zu empfangen." Münzen und Juwelen bedecken den Altar.',lt:'← Ablehnen',rt:'Opfern (−15 Gold → +5 LP)',gcost:15,L:{msg:'Du lässt dein Gold. Der Schrein erlischt.'},R:{gold:-15,hp:5,msg:'Das Gold verschwindet. Eine warme Energie heilt dich.'}},
-  {n:'Glücksschrein',d:'Schimmernde Symbole tanzen um einen spiegelnden Altar.',lt:'← Ablehnen',rt:'Opfern (−5 LP → +1 GLK)',L:{fate:1,msg:'Du trittst zurück. Das Schicksal nimmt sich, was es will.'},R:{hp:-5,luck:1,fate:-1,msg:'Ein Gefühl von Möglichkeiten durchströmt dich.'}}
+  {n:'Kriegsschrein',d:'Ein Altar aus alten Knochen und Waffen. Er verlangt ein Opfer.',lt:'← Ablehnen',rt:'LP opfern (+1 ATK)',
+   L:{fate:1,msg:'Du verweigerst das Opfer. Der Schrein bleibt stumm — aber du spürst den Zug.'},
+   R:{hp:-3,atk:1,fate:-1,msg:'Schmerz frisst sich durch deinen Arm. Dann: Stärke. Uralte Kampfkunst prägt sich ein. +1 ATK.'}},
+  {n:'Schutzschrein',d:'Blaues Licht fließt über einen steinernen Altar. Er strahlt Wärme aus.',lt:'← Ablehnen',rt:'LP opfern (+1 DEF)',
+   L:{fate:-1,msg:'Du lehnst den Schutz ab. Manche Festungen muss man selbst bauen.'},
+   R:{hp:-3,def:1,fate:1,msg:'Ein unsichtbares Kribbeln hüllt dich ein. Deine Haut wird härter. +1 DEF.'}},
+  {n:'Goldschrein',d:'"Gib, um zu empfangen." Münzen und Juwelen bedecken den Altar.',lt:'← Ablehnen',rt:'Gold opfern (+5 LP)',gcost:15,
+   L:{msg:'Du lässt dein Gold. Der Schrein erlischt enttäuscht.'},
+   R:{gold:-15,hp:5,msg:'Das Gold verschwindet in einem Flimmern. Wärme breitet sich aus — Wunden schließen sich. +5 LP.'}},
+  {n:'Glücksschrein',d:'Schimmernde Symbole tanzen um einen spiegelnden Altar. Das Schicksal flüstert.',lt:'← Ablehnen',rt:'LP opfern (Glücksbuff)',
+   L:{fate:1,msg:'Du trittst zurück. Das Schicksal nimmt sich ohnehin, was es will.'},
+   R:{hp:-5,luckyBuff:1,fate:-1,msg:'Ein Funkeln durchfährt dich. Das Schicksal lächelt kurz. Du spürst einen Schutzschimmer — nutze ihn mit dem Super Swipe.'}}
 ];
+
 const TRE=[
-  {n:'Alte Truhe',d:'Eine verrostete Eisentruhe mit einfachem Schloss. Inhalt unbekannt.',lt:'← Ignorieren',rt:'Öffnen →',L:{msg:'Du lässt die Truhe stehen.'},R:{lr:1,good:{gold:20,hp:5,msg:'Gold und ein Heiltrank. Heute hast du Glück!'},bad:{hp:-4,msg:'Eine Nadelfalle! Die Truhe war leer.'}}},
-  {n:'Kristallkammer',d:'Leuchtende Kristalle füllen die Kammer. Einer pulsiert heller als die anderen.',lt:'← Weitergehen',rt:'Kristall nehmen →',L:{msg:'Du lässt die Kristalle in Ruhe.'},R:{hp:8,msg:'Der Kristall zerplatzt und heilt deine Wunden.'}},
-  {n:'Waffenkammer',d:'Zwischen Rost und Staub glänzt ein gut erhaltenes Werkzeug.',lt:'← Ignorieren',rt:'Nehmen →',L:{msg:'Du lässt die alten Waffen liegen.'},R:{lr:1,good:{atk:1,msg:'Eine scharf geschliffene Klinge.'},bad:{def:1,msg:'Ein stabiler Schild, noch brauchbar.'}}},
-  {n:'Verfluchte Schatzkammer',d:'Unmengen Gold — mehr als du je sahst. Aber die Luft riecht nach Magie.',lt:'← Fliehen!',rt:'Nehmen (Fluch: −3 LP) →',L:{fate:1,msg:'Du vertraust deinem Instinkt und fliehst.'},R:{gold:25,hp:-3,fate:-1,msg:'Der Fluch greift nach dir — aber das Gold ist real.'}}
+  {n:'Alte Truhe',d:'Eine verrostete Eisentruhe mit einfachem Schloss. Inhalt unbekannt.',lt:'← Ignorieren',rt:'Öffnen →',
+   L:{msg:'Du lässt die Truhe stehen. Vielleicht besser so.'},
+   R:{lr:1,good:{gold:20,hp:5,msg:'Die Truhe springt auf — Gold, ein alter Heiltrank. Heute hat das Schicksal Humor.'},bad:{hp:-4,msg:'Eine Nadelfalle schießt heraus. Die Truhe war leer — und bösartig gemeint.'}}},
+  {n:'Kristallkammer',d:'Leuchtende Kristalle füllen die Kammer. Einer pulsiert heller als die anderen.',lt:'← Weitergehen',rt:'Kristall nehmen →',
+   L:{msg:'Du lässt die Kristalle in Ruhe. Schön, aber nicht deins.'},
+   R:{hp:8,msg:'Der Kristall zerplatzt in deiner Hand. Heilende Energie strömt durch deinen Körper. +8 LP.'}},
+  {n:'Waffenkammer',d:'Zwischen Rost und Staub glänzt etwas Unberührtes.',lt:'← Weitergehen',rt:'Untersuchen →',
+   L:{msg:'Du lässt die alte Ausrüstung liegen.'},
+   R:{lr:1,good:{atk:1,msg:'Eine scharf geschliffene Klinge — alt, aber makellos. +1 ATK.'},bad:{def:1,msg:'Ein stabiler Schild, noch gut in Form. +1 DEF.'}}},
+  {n:'Verfluchte Schatzkammer',d:'Unmengen Gold — mehr als du je sahst. Die Luft riecht nach uralter Magie.',lt:'← Fliehen!',rt:'Nehmen (Fluch: −3 LP) →',
+   L:{fate:1,msg:'Du vertraust deinem Instinkt und fliehst. Das Gold glitzert dir verlockend nach.'},
+   R:{gold:25,hp:-3,fate:-1,msg:'Du greifst nach dem Gold — und spürst den Fluch wie Klauen. Aber die Münzen sind real. +25 Gold, −3 LP.'}}
 ];
+
 const RST=[
-  {n:'Altes Lagerfeuer',d:'Das Feuer knistert. Wärme breitet sich aus. Schlafen oder üben?',lt:'← Schlafen (+6 LP)',rt:'Trainieren (+1 ATK)',L:{hp:6,fate:1,msg:'Du schläfst tief. Deine Wunden schließen sich.'},R:{atk:1,fate:-1,msg:'Du übst Stunden lang. Dein Schwertarm stärkt sich.'}},
-  {n:'Mystisches Lager',d:'Seltsame Zeichen. Das Licht flackert ohne Wind. Tiefe Stille.',lt:'← Rasten (+8 LP)',rt:'Meditieren (+1 GLK)',L:{hp:8,msg:'Tiefe Ruhe. Du wachst gestärkt auf.'},R:{luck:1,fate:1,msg:'In der Stille findest du innere Klarheit.'}}
+  {n:'Altes Lagerfeuer',d:'Das Feuer knistert. Wärme breitet sich aus. Schlafen oder üben?',lt:'← Schlafen (+6 LP)',rt:'Trainieren (+1 ATK)',
+   L:{hp:6,fate:1,msg:'Du schläfst tief und traumlos. Wunden schließen sich, der Körper findet Ruhe. +6 LP.'},
+   R:{atk:1,fate:-1,msg:'Stundenlang übst du Hiebe gegen die Steinwand. Dein Schwertarm brennt — dann kommt die Stärke. +1 ATK.'}},
+  {n:'Mystisches Lager',d:'Seltsame Zeichen an den Wänden. Das Licht flackert ohne Wind.',lt:'← Rasten (+8 LP)',rt:'Meditieren (Glücksbuff)',
+   L:{hp:8,msg:'Tiefe Ruhe erfasst dich. Du wachst gestärkt auf, als hätte der Raum selbst geheilt. +8 LP.'},
+   R:{luckyBuff:1,fate:1,msg:'In der Stille findest du inneren Frieden. Ein leises Leuchten — das Schicksal neigt sich zu dir. Nutze den Super Swipe um den Buff einzusetzen.'}}
 ];
 
 let S={};
-function initS(cls){const c=CLS[cls];S={cls,name:c.name,hp:c.hp,mhp:c.hp,atk:c.atk,def:c.def,luck:c.luck,gold:0,floor:1,waage:0,locked:false,card:null};}
+function initS(cls){const c=CLS[cls];S={cls,name:c.name,hp:c.hp,mhp:c.hp,atk:c.atk,def:c.def,luck:c.luck,gold:0,floor:1,waage:0,luckyBuff:0,locked:false,card:null};}
 
-function genCard(){const f=S.floor;if(f===4)return bossCard(0);if(f===8)return bossCard(1);if(f===12)return bossCard(2);if(f===3||f===7||f===11)return{type:'rest',...RST[Math.floor(Math.random()*RST.length)]};const r=Math.random();if(r<0.37)return monCard();if(r<0.57)return treCard();if(r<0.72)return evtCard();if(r<0.85)return shrCard();return merCard();}
-function monCard(){const pool=MON.filter(m=>(!m.min||S.floor>=m.min)&&(!m.max||S.floor<=m.max));const m=pool[Math.floor(Math.random()*pool.length)];const sc=1+Math.max(0,S.floor-4)*0.12;return{type:'monster',n:m.n,d:m.d,mhp:Math.round(m.hp*sc),matk:Math.round(m.atk*(1+Math.max(0,S.floor-4)*0.08)),g:Math.round(m.g*sc)};}
-function bossCard(i){const b=BOSS[i];return{type:'boss',n:b.n,d:b.d,mhp:b.hp,matk:b.atk,g:b.g};}
-function evtCard(){return{type:'event',...EVT[Math.floor(Math.random()*EVT.length)]};}
-function shrCard(){return{type:'shrine',...SHR[Math.floor(Math.random()*SHR.length)]};}
-function treCard(){return{type:'treasure',...TRE[Math.floor(Math.random()*TRE.length)]};}
-function merCard(){return{type:'merchant',n:'Wanderhändler',d:'Ein maskierter Händler tritt hervor. "Frischer Vorrat — für den richtigen Preis."',lt:'← Weitergehen',rt:'Heiltrank kaufen (15 Gold → +8 LP)',price:15};}
+function genCard(){const f=S.floor;if(f===4)return bossCard(0);if(f===8)return bossCard(1);if(f===12)return bossCard(2);if(f===3||f===7||f===11)return{type:'rest',...RST[~~(Math.random()*RST.length)]};const r=Math.random();if(r<0.37)return monCard();if(r<0.57)return treCard();if(r<0.72)return evtCard();if(r<0.85)return shrCard();return merCard();}
+function monCard(){const pool=MON.filter(m=>(!m.min||S.floor>=m.min)&&(!m.max||S.floor<=m.max));const m=pool[~~(Math.random()*pool.length)];const sc=1+Math.max(0,S.floor-4)*0.12;return{type:'monster',n:m.n,d:m.d,mhp:Math.round(m.hp*sc),matk:Math.round(m.atk*(1+Math.max(0,S.floor-4)*0.08)),g:Math.round(m.g*sc),lt:m.lt,rt:m.rt};}
+function bossCard(i){const b=BOSS[i];return{type:'boss',n:b.n,d:b.d,mhp:b.hp,matk:b.atk,g:b.g,bi:b.bi,lt:b.lt,rt:b.rt,lWin:b.lWin,lLose:b.lLose,rWin:b.rWin,rLose:b.rLose};}
+function evtCard(){return{type:'event',...EVT[~~(Math.random()*EVT.length)]};}
+function shrCard(){return{type:'shrine',...SHR[~~(Math.random()*SHR.length)]};}
+function treCard(){return{type:'treasure',...TRE[~~(Math.random()*TRE.length)]};}
+function merCard(){return{type:'merchant',n:'Wanderhändler',d:'Ein maskierter Händler tritt hervor. "Frischer Vorrat — für den richtigen Preis."',lt:'← Weiterziehen',rt:'Heiltrank kaufen →',price:15};}
 
-function render(){const c=S.card;if(!c)return;const t=c.type;document.getElementById('c-img').src=IMG[t]||'';document.getElementById('c-type-lbl').textContent=TLBL[t]||t;document.getElementById('c-title').textContent=c.n||'';document.getElementById('c-text').textContent=c.d||'';const al=document.getElementById('sa-l'),ar=document.getElementById('sa-r');al.innerHTML=c.lt||'← Links';ar.innerHTML=c.rt||'Rechts →';al.classList.toggle('disabled',t==='boss');const card=document.getElementById('the-card');card.classList.remove('card-in');void card.offsetWidth;card.classList.add('card-in');}
+function render(){
+  const c=S.card;if(!c)return;
+  const t=c.type;
+  document.getElementById('c-img').src=IMG[t]||'';
+  document.getElementById('c-type-lbl').textContent=TLBL[t]||t;
+  document.getElementById('c-title').textContent=c.n||'';
+  document.getElementById('c-text').textContent=c.d||'';
+  document.getElementById('sa-l').innerHTML=c.lt||'← Links';
+  document.getElementById('sa-r').innerHTML=c.rt||'Rechts →';
+  document.getElementById('sa-l').classList.remove('disabled');
+  const card=document.getElementById('the-card');
+  card.classList.remove('card-in');void card.offsetWidth;card.classList.add('card-in');
+}
 
-function renderHUD(){document.getElementById('h-floor').textContent='Etage '+S.floor+' / 12';document.getElementById('h-depth').textContent=S.floor<=4?'Obere Katakomben':S.floor<=8?'Mittlere Gewölbe':'Tiefe Kammern';const pct=Math.max(0,Math.min(100,(S.hp/S.mhp)*100));document.getElementById('hp-fill').style.width=pct+'%';document.getElementById('hp-fill').style.background=pct<25?'#7a0f0f':pct<50?'#8a2810':'#b01818';document.getElementById('s-hp').textContent=Math.max(0,S.hp)+'/'+S.mhp;document.getElementById('s-atk').textContent=S.atk;document.getElementById('s-def').textContent=S.def;document.getElementById('s-gold').textContent=S.gold;const w=S.waage;document.getElementById('w-l').style.width=(w<0?Math.min(50,Math.abs(w)/8*50):0)+'%';document.getElementById('w-r').style.width=(w>0?Math.min(50,w/8*50):0)+'%';let ws='Ausgeglichen';if(w<=-5)ws='Rasender Mut';else if(w<=-2)ws='Kühn';else if(w>=5)ws='Tiefe Besonnenheit';else if(w>=2)ws='Besonnen';document.getElementById('w-status').textContent=ws;}
+function renderHUD(){
+  document.getElementById('h-floor').textContent='Etage '+S.floor+' / 12';
+  document.getElementById('h-depth').textContent=S.floor<=4?'Obere Katakomben':S.floor<=8?'Mittlere Gewölbe':'Tiefe Kammern';
+  const pct=Math.max(0,Math.min(100,(S.hp/S.mhp)*100));
+  document.getElementById('hp-fill').style.width=pct+'%';
+  document.getElementById('hp-fill').style.background=pct<25?'#7a0f0f':pct<50?'#8a2810':'#b01818';
+  document.getElementById('s-hp').textContent=Math.max(0,S.hp)+'/'+S.mhp;
+  document.getElementById('s-atk').textContent=S.atk;
+  document.getElementById('s-def').textContent=S.def;
+  document.getElementById('s-gold').textContent=S.gold;
+  document.getElementById('s-luck').textContent=S.luckyBuff;
+  document.getElementById('box-luck').classList.toggle('on',S.luckyBuff>0);
+  const sh=document.getElementById('super-hint');if(sh)sh.classList.toggle('on',S.luckyBuff>0);
+  const crd=document.getElementById('the-card');if(crd)crd.classList.toggle('lucky',S.luckyBuff>0);
+  const w=S.waage;
+  document.getElementById('w-l').style.width=(w<0?Math.min(50,Math.abs(w)/8*50):0)+'%';
+  document.getElementById('w-r').style.width=(w>0?Math.min(50,w/8*50):0)+'%';
+  let ws='Ausgeglichen';
+  if(w<=-5)ws='Rasender Mut';else if(w<=-2)ws='Kühn';
+  else if(w>=5)ws='Tiefe Besonnenheit';else if(w>=2)ws='Besonnen';
+  document.getElementById('w-status').textContent=ws;
+}
 
-function showResult(icon,msg,deltas,cb){const ov=document.getElementById('result-overlay');document.getElementById('result-icon').textContent=icon;document.getElementById('result-msg').textContent=msg;const dd=document.getElementById('result-deltas');dd.innerHTML='';deltas.forEach(d=>{const el=document.createElement('span');el.className='rdelta '+(d.v>0?'pos':'neg');el.textContent=(d.v>0?'+':'')+d.v+' '+d.lbl;dd.appendChild(el);});ov.classList.add('show');setTimeout(()=>{ov.classList.remove('show');setTimeout(cb,220);},1600);}
-function deltaFrom(b,a){const d=[];if(a.hp!==b.hp)d.push({v:a.hp-b.hp,lbl:'LP'});if(a.atk!==b.atk)d.push({v:a.atk-b.atk,lbl:'ATK'});if(a.def!==b.def)d.push({v:a.def-b.def,lbl:'DEF'});if(a.gold!==b.gold)d.push({v:a.gold-b.gold,lbl:'Gold'});return d;}
+function flashStat(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('stat-flash');void el.offsetWidth;el.classList.add('stat-flash');}
 
-function applyE(e){if(!e)return;if(e.hp)S.hp=Math.min(S.mhp,S.hp+e.hp);if(e.atk)S.atk+=e.atk;if(e.def)S.def+=e.def;if(e.luck)S.luck=Math.max(1,S.luck+e.luck);if(e.gold)S.gold=Math.max(0,S.gold+e.gold);if(e.fate)S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));}
-function luckRoll(e){const ok=Math.random()<(0.3+S.luck*0.08);if(e.fate)S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));if(ok){applyE(e.good);return{msg:e.good.msg,ok:true};}applyE(e.bad);return{msg:e.bad.msg,ok:false};}
+let _resCb=null;
+function showResult(icon,narrative,deltas,cb,isSuper){
+  _resCb=cb;
+  document.getElementById('result-icon').textContent=icon;
+  document.getElementById('result-narrative').textContent=narrative;
+  const dd=document.getElementById('result-deltas');dd.innerHTML='';
+  deltas.forEach(d=>{
+    const el=document.createElement('span');
+    el.className='rdelta '+(d.v>0?'pos':'neg');
+    el.textContent=(d.v>0?'+':'')+d.v+' '+d.lbl;
+    dd.appendChild(el);
+  });
+  const ov=document.getElementById('result-overlay');
+  ov.classList.toggle('super',!!isSuper);
+  ov.classList.add('show');
+}
+function dismissResult(){
+  const ov=document.getElementById('result-overlay');
+  ov.classList.remove('show','super');
+  setTimeout(()=>{if(_resCb){_resCb();_resCb=null;}},240);
+}
+function deltaFrom(b,a){
+  const d=[];
+  if(a.hp!==b.hp) d.push({v:a.hp-b.hp,lbl:'LP'});
+  if(a.atk!==b.atk) d.push({v:a.atk-b.atk,lbl:'ATK'});
+  if(a.def!==b.def) d.push({v:a.def-b.def,lbl:'DEF'});
+  if(a.gold!==b.gold) d.push({v:a.gold-b.gold,lbl:'Gold'});
+  if(a.luckyBuff>b.luckyBuff) d.push({v:a.luckyBuff-b.luckyBuff,lbl:'✦ GLK'});
+  return d;
+}
 
-function resolveL(c){const t=c.type;if(t==='monster'){const lost=Math.min(S.gold,8);S.gold-=lost;S.waage=Math.max(-8,S.waage-1);return{msg:lost>0?'Du fliehst und verlierst '+lost+' Gold.':'Du fliehst, ohne zu kämpfen.',icon:'🏃'};}if(t==='boss')return{msg:'',icon:''};if(t==='merchant'){S.waage=Math.min(8,S.waage+1);return{msg:'Du gehst weiter.',icon:'🚶'};}const e=c.L;if(!e)return{msg:'...',icon:'❓'};applyE(e);return{msg:e.msg||'...',icon:'🚶'};}
-function resolveR(c){const t=c.type;if(t==='monster'||t==='boss'){const crit=Math.random()<S.luck*0.06;const dmgOut=(crit?2:1)*S.atk;S.waage=Math.max(-8,S.waage-(t==='boss'?2:1));if(dmgOut>=c.mhp){S.gold+=c.g;return{msg:(crit?'Kritischer Treffer! ':'')+'Du besiegst '+c.n+'!',icon:crit?'💥':'⚔'};}const dmgIn=Math.max(1,c.matk-S.def);S.hp-=dmgIn;if(dmgOut>=c.mhp*0.5){S.gold+=c.g;return{msg:'Harter Kampf! Du besiegst '+c.n+', nimmst aber '+dmgIn+' Schaden.',icon:'⚔'};}const partG=Math.floor(c.g*0.3);S.gold+=partG;return{msg:c.n+' ist mächtig! Du nimmst '+dmgIn+' Schaden.',icon:'💀'};}if(t==='event'||t==='treasure'){const e=c.R;if(!e)return{msg:'...',icon:'❓'};if(e.lr){const r=luckRoll(e);return{msg:r.msg,icon:r.ok?'✨':'💀'};}applyE(e);return{msg:e.msg,icon:'✨'};}if(t==='shrine'){const e=c.R;if(!e)return{msg:'...',icon:'✦'};applyE(e);return{msg:e.msg,icon:'✦'};}if(t==='rest'){const e=c.R;if(!e)return{msg:'...',icon:'🔥'};applyE(e);return{msg:e.msg,icon:'🔥'};}if(t==='merchant'){S.gold-=c.price;S.hp=Math.min(S.mhp,S.hp+8);S.waage=Math.max(-8,S.waage-1);return{msg:'Heiltrank gekauft. +8 LP.',icon:'⚗'};}return{msg:'...',icon:'❓'};}
+function applyE(e){
+  if(!e)return;
+  if(e.hp)        S.hp=Math.min(S.mhp,S.hp+e.hp);
+  if(e.atk)       S.atk+=e.atk;
+  if(e.def)       S.def+=e.def;
+  if(e.luck)      S.luck=Math.max(1,S.luck+e.luck);
+  if(e.gold)      S.gold=Math.max(0,S.gold+e.gold);
+  if(e.fate)      S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));
+  if(e.luckyBuff) S.luckyBuff=Math.min(3,S.luckyBuff+e.luckyBuff);
+}
+function sfxFromE(e){
+  if(!e)return null;
+  if(e.gold&&e.gold>0)return 'coin';
+  if(e.hp&&e.hp>0)return 'heal';
+  if(e.atk||e.def)return 'magic';
+  if(e.luckyBuff)return 'magic';
+  if(e.hp&&e.hp<0)return 'damage';
+  return null;
+}
+function luckRoll(e){
+  const ok=Math.random()<(0.3+S.luck*0.08);
+  if(e.fate)S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));
+  if(ok){applyE(e.good);return{msg:e.good.msg,ok:true};}
+  applyE(e.bad);return{msg:e.bad.msg,ok:false};
+}
 
-function doSwipe(dir){if(S.locked)return;const c=S.card;if(!c)return;if(c.type==='boss'&&dir==='left'){shake();return;}if(c.type==='merchant'&&dir==='right'&&S.gold<c.price){shake();return;}if(c.type==='shrine'&&dir==='right'&&c.gcost&&S.gold<c.gcost){shake();return;}S.locked=true;const before={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold};const card=document.getElementById('the-card');card.style.transition='transform 0.3s ease, opacity 0.3s';card.style.transform='translateX('+(dir==='right'?480:-480)+'px) rotate('+(dir==='right'?16:-16)+'deg)';card.style.opacity='0';const result=dir==='left'?resolveL(c):resolveR(c);renderHUD();const after={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold};const deltas=deltaFrom(before,after);const dead=S.hp<=0;const win=c.type==='boss'&&S.floor===12&&dir==='right';setTimeout(()=>{showResult(result.icon,result.msg,deltas,()=>{if(dead){showDead();return;}if(win){showWin();return;}card.style.transition='none';card.style.transform='';card.style.opacity='1';S.floor++;if(S.floor>12){showWin();return;}S.card=genCard();render();renderHUD();S.locked=false;});},320);}
+function resolveBoss(c,dir){
+  let dmgOut,dmgIn;
+  if(dir==='left'){
+    dmgOut=Math.round(S.atk*1.7);
+    dmgIn=Math.max(2,Math.round(c.matk*1.15-S.def*0.4));
+    S.waage=Math.max(-8,S.waage-2);
+  } else {
+    dmgOut=Math.round(S.atk*1.05);
+    dmgIn=Math.max(1,Math.round(c.matk-S.def*1.6));
+    S.waage=Math.min(8,S.waage+2);
+  }
+  const won=dmgOut>=c.mhp*0.6;
+  S.hp-=dmgIn;S.gold+=c.g;
+  const msgKey=dir==='left'?(won?'lWin':'lLose'):(won?'rWin':'rLose');
+  return{msg:c[msgKey]+` (${dmgIn} LP verloren)`,icon:won?'💥':'⚔',sfxn:won?'boss':'sword'};
+}
 
-function shake(){const card=document.getElementById('the-card');const seq=['-10px','9px','-5px','0'];let i=0;const run=()=>{card.style.transition='transform 0.07s';card.style.transform='translateX('+seq[i]+')';if(++i<seq.length)setTimeout(run,70);};run();}
+function resolveL(c){
+  const t=c.type;
+  if(t==='boss')return resolveBoss(c,'left');
+  if(t==='monster'){
+    const lost=Math.min(S.gold,8);S.gold-=lost;S.waage=Math.max(-8,S.waage-1);
+    return{msg:lost>0?`Du fliehst und verlierst ${lost} Gold. Feige — aber lebendig.`:'Du fliehst. Der Dungeon ist heute gnädig.',icon:'🏃',sfxn:'flee'};
+  }
+  if(t==='merchant'){S.waage=Math.min(8,S.waage+1);return{msg:'Du ziehst weiter. Der Händler ruft dir hinterher.',icon:'🚶',sfxn:null};}
+  const e=c.L;if(!e)return{msg:'...',icon:'❓',sfxn:null};
+  applyE(e);return{msg:e.msg||'...',icon:'🚶',sfxn:sfxFromE(e)};
+}
+function resolveR(c){
+  const t=c.type;
+  if(t==='boss')return resolveBoss(c,'right');
+  if(t==='monster'){
+    const crit=Math.random()<S.luck*0.06;
+    const dmgOut=(crit?2:1)*S.atk;
+    S.waage=Math.max(-8,S.waage-1);
+    if(dmgOut>=c.mhp){S.gold+=c.g;return{msg:crit?`Kritischer Treffer! Du besiegst ${c.n}! +${c.g} Gold.`:`Du besiegst ${c.n}! Sauberer Sieg. +${c.g} Gold.`,icon:crit?'💥':'⚔',sfxn:'sword'};}
+    const dmgIn=Math.max(1,c.matk-S.def);S.hp-=dmgIn;
+    if(dmgOut>=c.mhp*0.5){S.gold+=c.g;return{msg:`Harter Kampf! Du besiegst ${c.n}, nimmst aber ${dmgIn} Schaden. +${c.g} Gold.`,icon:'⚔',sfxn:'sword'};}
+    const partG=Math.floor(c.g*0.3);S.gold+=partG;
+    return{msg:`${c.n} ist mächtig! Du nimmst ${dmgIn} Schaden${partG>0?` und erbeutest ${partG} Gold`:''}. Noch lebst du.`,icon:'💀',sfxn:'damage'};
+  }
+  if(t==='event'||t==='treasure'){
+    const e=c.R;if(!e)return{msg:'...',icon:'❓',sfxn:null};
+    if(e.lr){const r=luckRoll(e);return{msg:r.msg,icon:r.ok?'✨':'💀',sfxn:r.ok?'chest':'fail'};}
+    applyE(e);return{msg:e.msg,icon:'✨',sfxn:sfxFromE(e)};
+  }
+  if(t==='shrine'){const e=c.R;if(!e)return{msg:'...',icon:'✦',sfxn:null};applyE(e);return{msg:e.msg,icon:'✦',sfxn:'magic'};}
+  if(t==='rest'){const e=c.R;if(!e)return{msg:'...',icon:'🔥',sfxn:null};applyE(e);return{msg:e.msg,icon:e.hp?'🔥':'✦',sfxn:e.hp?'heal':'magic'};}
+  if(t==='merchant'){S.gold-=c.price;S.hp=Math.min(S.mhp,S.hp+8);S.waage=Math.max(-8,S.waage-1);return{msg:'Du kaufst den Heiltrank. Die Wärme des Tranks strömt durch deinen Körper. +8 LP.',icon:'⚗',sfxn:'heal'};}
+  return{msg:'...',icon:'❓',sfxn:null};
+}
 
-let sx=0,dragging=false;
-const THRESH=62;
+function resolveSuperSwipe(c){
+  const t=c.type;
+  if(t==='monster'){
+    S.gold+=c.g;S.waage=Math.max(-8,S.waage-1);
+    return{msg:`Das Schicksal lächelt. Kritischer Treffer — ${c.n} fällt ohne Gegenwehr. Kein Schaden genommen. +${c.g} Gold.`,icon:'✦',sfxn:'victory'};
+  }
+  if(t==='boss'){
+    const dmgIn=Math.max(0,Math.round(c.matk*0.25-S.def));
+    S.hp-=dmgIn;S.gold+=c.g;S.waage=Math.max(-8,S.waage-1);
+    return{msg:`Das Schicksal führt deine Klinge. ${c.n} fällt fast unversehrt von dir. ${dmgIn>0?`Nur ${dmgIn} LP verloren.`:'Kein Schaden.'}`,icon:'✦',sfxn:'victory'};
+  }
+  if(t==='event'){
+    const e=c.R;if(!e)return{msg:'Das Schicksal lächelt.',icon:'✦',sfxn:'magic'};
+    if(e.lr){applyE(e.good);if(e.fate)S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));return{msg:`Das Schicksal neigt sich zu dir. ${e.good.msg}`,icon:'✦',sfxn:'magic'};}
+    applyE(e);S.gold+=5;S.hp=Math.min(S.mhp,S.hp+3);
+    return{msg:`Das Glück verstärkt das Ergebnis. ${e.msg} Zusätzlich: +5 Gold, +3 LP.`,icon:'✦',sfxn:'magic'};
+  }
+  if(t==='treasure'){
+    const e=c.R;if(!e)return{msg:'Das Schicksal öffnet den Weg.',icon:'✦',sfxn:'chest'};
+    if(e.lr){applyE(e.good);return{msg:`Das Schicksal öffnet den Weg. ${e.good.msg}`,icon:'✦',sfxn:'chest'};}
+    applyE(e);S.gold+=8;return{msg:`Das Glück verdoppelt den Fund. ${e.msg} +8 Gold.`,icon:'✦',sfxn:'chest'};
+  }
+  if(t==='shrine'){
+    const e=c.R;if(!e)return{msg:'Der Schrein öffnet sich.',icon:'✦',sfxn:'magic'};
+    if(e.atk)S.atk+=e.atk;if(e.def)S.def+=e.def;if(e.luckyBuff)S.luckyBuff=Math.min(3,S.luckyBuff+e.luckyBuff);
+    if(e.fate)S.waage=Math.max(-8,Math.min(8,S.waage+e.fate));
+    return{msg:`Das Glück erlaubt das Opfer ohne Schmerz. ${e.msg}`,icon:'✦',sfxn:'magic'};
+  }
+  if(t==='rest'){
+    if(c.L&&c.L.hp)S.hp=Math.min(S.mhp,S.hp+c.L.hp);
+    if(c.R&&c.R.atk)S.atk+=c.R.atk;
+    return{msg:'Vollständige Erholung: Wunden schließen sich, dein Schwertarm wird stärker. Das Schicksal war großzügig.',icon:'✦',sfxn:'heal'};
+  }
+  if(t==='merchant'){
+    S.hp=Math.min(S.mhp,S.hp+10);S.waage=Math.max(-8,S.waage-1);
+    return{msg:'Der Händler schenkt dir den Trank. Das Glück hat seinen Preis bezahlt. +10 LP gratis.',icon:'✦',sfxn:'heal'};
+  }
+  return{msg:'Das Schicksal lächelt.',icon:'✦',sfxn:'magic'};
+}
+
+function doSuperSwipe(){
+  if(S.locked||S.luckyBuff<=0)return;
+  const c=S.card;if(!c)return;
+  S.locked=true;
+  const before={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold,luckyBuff:S.luckyBuff};
+  S.luckyBuff=0;
+  const card=document.getElementById('the-card');
+  card.style.transition='transform 0.35s ease, opacity 0.32s';
+  card.style.transform='translateY(-580px) scale(0.8)';
+  card.style.opacity='0';
+  const result=resolveSuperSwipe(c);
+  renderHUD();
+  const after={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold,luckyBuff:S.luckyBuff};
+  const deltas=deltaFrom(before,after);
+  sfx(result.sfxn);
+  const dead=S.hp<=0;
+  const win=c.type==='boss'&&S.floor===12&&!dead;
+  if(dead)vib([150,80,150]);
+  else if(win)vib([60,20,80,20,120]);
+  else vib([40,15,80,15,40]);
+  deltas.forEach(d=>{if(d.lbl==='LP')flashStat('s-hp');else if(d.lbl==='ATK')flashStat('s-atk');else if(d.lbl==='Gold')flashStat('s-gold');});
+  setTimeout(()=>{
+    showResult(result.icon,result.msg,deltas,()=>{
+      if(dead){showDead();return;}
+      if(win){showWin();return;}
+      card.style.transition='none';card.style.transform='';card.style.opacity='1';
+      S.floor++;if(S.floor>12){showWin();return;}
+      S.card=genCard();render();renderHUD();S.locked=false;
+    },true);
+  },360);
+}
+
+function doSwipe(dir){
+  if(S.locked)return;
+  const c=S.card;if(!c)return;
+  if(c.type==='merchant'&&dir==='right'&&S.gold<c.price){shake();sfx('fail');vib([30,15,30]);return;}
+  if(c.type==='shrine'&&dir==='right'&&c.gcost&&S.gold<c.gcost){shake();sfx('fail');vib([30,15,30]);return;}
+  S.locked=true;
+  const before={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold,luckyBuff:S.luckyBuff};
+  const card=document.getElementById('the-card');
+  card.style.transition='transform 0.3s ease, opacity 0.3s';
+  card.style.transform='translateX('+(dir==='right'?490:-490)+'px) rotate('+(dir==='right'?16:-16)+'deg)';
+  card.style.opacity='0';
+  const result=dir==='left'?resolveL(c):resolveR(c);
+  renderHUD();
+  const after={hp:S.hp,atk:S.atk,def:S.def,gold:S.gold,luckyBuff:S.luckyBuff};
+  const deltas=deltaFrom(before,after);
+  sfx(result.sfxn);
+  const dead=S.hp<=0;
+  const win=c.type==='boss'&&S.floor===12&&!dead;
+  if(dead)vib([150,80,150]);
+  else if(win)vib([40,20,40,20,80]);
+  else if(deltas.some(d=>d.lbl==='LP'&&d.v<0))vib([55,25,55]);
+  else if(deltas.some(d=>d.v>0))vib([20]);
+  else vib([12]);
+  deltas.forEach(d=>{
+    if(d.lbl==='LP')flashStat('s-hp');
+    else if(d.lbl==='ATK')flashStat('s-atk');
+    else if(d.lbl==='DEF')flashStat('s-def');
+    else if(d.lbl==='Gold')flashStat('s-gold');
+  });
+  setTimeout(()=>{
+    showResult(result.icon,result.msg,deltas,()=>{
+      if(dead){showDead();return;}
+      if(win){showWin();return;}
+      card.style.transition='none';card.style.transform='';card.style.opacity='1';
+      S.floor++;if(S.floor>12){showWin();return;}
+      S.card=genCard();render();renderHUD();S.locked=false;
+    });
+  },320);
+}
+
+function shake(){
+  const card=document.getElementById('the-card');
+  const seq=['-10px','9px','-5px','0'];let i=0;
+  const run=()=>{card.style.transition='transform 0.07s';card.style.transform='translateX('+seq[i]+')';if(++i<seq.length)setTimeout(run,70);};
+  run();
+}
+
+let sx=0,sy=0,dragging=false,swipeDir=null;
+const THRESH=58;
 let inputReady=false;
-function setupInput(){if(inputReady)return;inputReady=true;const card=document.getElementById('the-card');card.addEventListener('mousedown',e=>{if(S.locked)return;dragging=true;sx=e.clientX;card.style.transition='none';e.preventDefault();});window.addEventListener('mousemove',e=>{if(!dragging||S.locked)return;const dx=e.clientX-sx;card.style.transform='translateX('+dx+'px) rotate('+(dx*0.036)+'deg)';const p=Math.min(1,Math.abs(dx)/THRESH);document.getElementById('hint-l').style.opacity=dx<0?p*0.9:0;document.getElementById('hint-r').style.opacity=dx>0?p*0.9:0;});window.addEventListener('mouseup',e=>{if(!dragging)return;dragging=false;document.getElementById('hint-l').style.opacity=0;document.getElementById('hint-r').style.opacity=0;const dx=e.clientX-sx;if(Math.abs(dx)>=THRESH)doSwipe(dx>0?'right':'left');else{card.style.transition='transform 0.22s ease';card.style.transform='';}});card.addEventListener('touchstart',e=>{if(S.locked)return;dragging=true;sx=e.touches[0].clientX;card.style.transition='none';},{passive:true});card.addEventListener('touchmove',e=>{if(!dragging||S.locked)return;const dx=e.touches[0].clientX-sx;card.style.transform='translateX('+dx+'px) rotate('+(dx*0.036)+'deg)';const p=Math.min(1,Math.abs(dx)/THRESH);document.getElementById('hint-l').style.opacity=dx<0?p*0.9:0;document.getElementById('hint-r').style.opacity=dx>0?p*0.9:0;},{passive:true});card.addEventListener('touchend',e=>{if(!dragging)return;dragging=false;document.getElementById('hint-l').style.opacity=0;document.getElementById('hint-r').style.opacity=0;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>=THRESH)doSwipe(dx>0?'right':'left');else{card.style.transition='transform 0.22s ease';card.style.transform='';}});document.addEventListener('keydown',e=>{if(!document.getElementById('s-game').classList.contains('on'))return;if(e.key==='ArrowLeft')doSwipe('left');if(e.key==='ArrowRight')doSwipe('right');});}
+function setupInput(){
+  if(inputReady)return;inputReady=true;
+  const card=document.getElementById('the-card');
+  card.addEventListener('mousedown',e=>{
+    if(S.locked)return;dragging=true;sx=e.clientX;sy=e.clientY;swipeDir=null;card.style.transition='none';e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging||S.locked)return;
+    const dx=e.clientX-sx,dy=sy-e.clientY;
+    if(!swipeDir&&(Math.abs(dx)>12||Math.abs(dy)>12))
+      swipeDir=(dy>Math.abs(dx)*0.8&&S.luckyBuff>0)?'v':'h';
+    if(swipeDir==='v'){
+      const lift=Math.max(0,dy);
+      card.style.transform=`translateY(${-lift*0.55}px) scale(${1-Math.min(lift/400,0.08)})`;
+    } else {
+      card.style.transform='translateX('+dx+'px) rotate('+(dx*0.036)+'deg)';
+      const p=Math.min(1,Math.abs(dx)/THRESH);
+      document.getElementById('hint-l').style.opacity=dx<0?p*0.88:0;
+      document.getElementById('hint-r').style.opacity=dx>0?p*0.88:0;
+    }
+  });
+  window.addEventListener('mouseup',e=>{
+    if(!dragging)return;dragging=false;
+    document.getElementById('hint-l').style.opacity=0;
+    document.getElementById('hint-r').style.opacity=0;
+    const dx=e.clientX-sx,dy=sy-e.clientY;
+    const dir=swipeDir;swipeDir=null;
+    if(dir==='v'&&dy>=THRESH&&S.luckyBuff>0){card.style.transition='none';card.style.transform='';doSuperSwipe();}
+    else if(Math.abs(dx)>=THRESH&&dir!=='v')doSwipe(dx>0?'right':'left');
+    else{card.style.transition='transform 0.22s ease';card.style.transform='';}
+  });
+  card.addEventListener('touchstart',e=>{
+    if(S.locked)return;dragging=true;sx=e.touches[0].clientX;sy=e.touches[0].clientY;swipeDir=null;card.style.transition='none';
+  },{passive:true});
+  card.addEventListener('touchmove',e=>{
+    if(!dragging||S.locked)return;
+    const dx=e.touches[0].clientX-sx,dy=sy-e.touches[0].clientY;
+    if(!swipeDir&&(Math.abs(dx)>12||Math.abs(dy)>12))
+      swipeDir=(dy>Math.abs(dx)*0.8&&S.luckyBuff>0)?'v':'h';
+    if(swipeDir==='v'){
+      const lift=Math.max(0,dy);
+      card.style.transform=`translateY(${-lift*0.55}px) scale(${1-Math.min(lift/400,0.08)})`;
+    } else {
+      card.style.transform='translateX('+dx+'px) rotate('+(dx*0.036)+'deg)';
+      const p=Math.min(1,Math.abs(dx)/THRESH);
+      document.getElementById('hint-l').style.opacity=dx<0?p*0.88:0;
+      document.getElementById('hint-r').style.opacity=dx>0?p*0.88:0;
+    }
+  },{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(!dragging)return;dragging=false;
+    document.getElementById('hint-l').style.opacity=0;
+    document.getElementById('hint-r').style.opacity=0;
+    const dx=e.changedTouches[0].clientX-sx,dy=sy-e.changedTouches[0].clientY;
+    const dir=swipeDir;swipeDir=null;
+    if(dir==='v'&&dy>=THRESH&&S.luckyBuff>0){card.style.transition='none';card.style.transform='';doSuperSwipe();}
+    else if(Math.abs(dx)>=THRESH&&dir!=='v')doSwipe(dx>0?'right':'left');
+    else{card.style.transition='transform 0.22s ease';card.style.transform='';}
+  });
+  document.addEventListener('keydown',e=>{
+    if(!document.getElementById('s-game').classList.contains('on'))return;
+    if(e.key==='ArrowLeft')doSwipe('left');
+    if(e.key==='ArrowRight')doSwipe('right');
+    if(e.key==='ArrowUp')doSuperSwipe();
+    if(e.key===' '||e.key==='Enter'){const ov=document.getElementById('result-overlay');if(ov.classList.contains('show'))dismissResult();}
+  });
+}
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById('s-'+id).classList.add('on');}
 function startGame(cls){initS(cls);S.card=genCard();go('game');render();renderHUD();setupInput();startMusic();}
