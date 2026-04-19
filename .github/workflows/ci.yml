@@ -52,7 +52,7 @@ jobs:
           check_file "Schrein Magie 1.jpg"
           check_file "Schatzkammer 1.jpg"
           check_file "Rastplatz Lagerfeuer 1.jpg"
-          check_file "Haendler 1.jpg"
+          check_file "Händler 1.jpg"
           if [ $MISSING -ne 0 ]; then
             echo "::error::Mindestens eine Pflichtdatei fehlt im Repository."
             exit 1
